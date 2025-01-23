@@ -152,7 +152,8 @@ public partial class DataBaseContext : DbContext
 
             entity.HasOne(d => d.Business).WithMany(p => p.Users)
                 .HasForeignKey(d => d.BusinessId)
-                .HasConstraintName("FK__Users__BusinessI__45F365D3");
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Users__BusinessI__52593CB8");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)

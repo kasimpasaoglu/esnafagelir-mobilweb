@@ -7,9 +7,9 @@ public partial class User
 {
     public int UserId { get; set; }
 
-    public Guid DeviceId { get; set; }
+    public Guid DeviceId { get; set; } = new Guid();
 
-    public DateTime? LastLogin { get; set; }
+    public DateTime LastLogin { get; set; }
 
     public bool IsConfirmedInfoText { get; set; }
 
@@ -23,9 +23,9 @@ public partial class User
 
     public DateTime RegisterDate { get; set; }
 
-    public int? BusinessId { get; set; }
+    public int BusinessId { get; set; }
 
-    public virtual Business? Business { get; set; }
+    public virtual Business Business { get; set; } = null!;
 
     public virtual ICollection<ContactRequest> ContactRequests { get; set; } = new List<ContactRequest>();
 
