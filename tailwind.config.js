@@ -7,16 +7,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#F6792C',
-        secondary: '#008037',
-        warning: '#ED1212',
-        cartBg: '#FEFEFE',
-        stroke: '#939393',
-        text: '#4E4E4E',
-        bgMain: '#F5F5F5'
+        appPrimary: '#F6792C',
+        appSecondary: '#008037',
+        appWarning: '#ED1212',
+        appCartBg: '#FEFEFE',
+        appStroke: '#939393',
+        appText: '#4E4E4E',
+        appBgMain: '#F5F5F5'
       },
       fontFamily: {
-        sans: ['Quicksand', 'sans-serif'] // Quicksand varsayılan sans-serif fontu
+        sans: ['Quicksand', 'sans-serif'], // Quicksand varsayilan
+        inter: ['Inter', 'sans-serif'] // Inter
       }
     },
   },

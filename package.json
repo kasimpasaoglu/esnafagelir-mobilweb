@@ -2,17 +2,18 @@
   "name": "esnafagelir-mobilweb",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tailwindcss -i ./wwwroot/css/input.css -o ./wwwroot/css/output.css --watch"
+    "dev": "npm-run-all --parallel runtailwind rundotnet",
+    "runtailwind": "npx tailwindcss -i ./wwwroot/css/input.css -o ./wwwroot/css/output.css --watch",
+    "rundotnet": "dotnet watch run"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "autoprefixer": "^10.4.20",
+    "npm-run-all": "^4.1.5",
     "postcss": "^8.5.1",
-    "tailwindcss": "^4.0.0"
+    "tailwindcss": "^3.4.17"
   }
 }
