@@ -1,6 +1,5 @@
 using AutoMapper;
 using esnafagelir_mobilweb.DMO;
-using Infrastructure.DTOs;
 
 public class MappingProfile : Profile
 {

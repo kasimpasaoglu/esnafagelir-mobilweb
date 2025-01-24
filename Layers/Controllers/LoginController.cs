@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 public class LoginController : Controller
 {
     private readonly ILoginService _loginService;
-    private readonly IValidator<Login> _validator;
-    public LoginController(ILoginService loginService, IValidator<Login> validator)
+    private readonly IValidator<LoginVM> _validator;
+    public LoginController(ILoginService loginService, IValidator<LoginVM> validator)
     {
         _validator = validator;
         _loginService = loginService;
@@ -13,11 +13,11 @@ public class LoginController : Controller
     public IActionResult Index()
     {
 
-        return View(new Login());
+        return View(new LoginVM());
     }
 
     [HttpPost]
-    public IActionResult Index(Login model)
+    public IActionResult Index(LoginVM model)
     {
         // todo cihaz id yi sorgula, kayit varsa tarih sorgula, 
         // son giristen beri 14 gun gectiyse RequestDetail sayfasina yonlendir, 
