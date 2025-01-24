@@ -1,4 +1,6 @@
 @model LoginVM
+
+
 <form asp-action="Index" method="post" class="px-4">
 
     <div class="w-full h-screen flex flex-col gap-4 items-center justify-evenly">
@@ -10,18 +12,15 @@
         <div class="flex flex-col gap-5">
             <label for="PhoneNumber" class="text-appStroke text-xs font-inter font-normal">Cep Telefonu</label>
             <input class="border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
-                asp-for="PhoneNumber" type="number" name="PhoneNumber" placeholder="05_ _  _ _ _  _ _ _ _">
+                asp-for="PhoneNumber" type="tel" placeholder="05_ _  _ _ _  _ _ _ _">
             <span class="text-appWarning text-sm" asp-validation-for="PhoneNumber"></span>
             <div class="flex items-center gap-2 mt-4">
                 <div class="flex flex-col gap-5">
-                    <a class="" href="Login/LegalNotice">Aydinlatma
-                        metnini okudum onayliyorum.
-                    </a>
-                    <span class="text-appWarning text-sm" asp-validation-for="IsConfirmedInfoText"></span>
+                    <a class="" href="/Login/LegalNotice">Aydinlatma metnini okudum onayliyorum.</a>
+                    <span class="text-appWarning text-sm" asp-validation-for="IsPrivacyPolicyAccepted"></span>
                 </div>
                 <label class="relative inline-flex items-center">
-                    <input type="checkbox" asp-for="IsConfirmedInfoText" name="IsConfirmedInfoText"
-                        class="sr-only peer">
+                    <input type="checkbox" asp-for="IsPrivacyPolicyAccepted" class="sr-only peer">
                     <div class="w-[3.20rem] h-8 bg-gray-200 rounded-full peer peer-checked:bg-green-600">
                     </div>
                     <div

@@ -9,7 +9,7 @@ public class LoginValidator : AbstractValidator<LoginVM>
             .Must(phone => phone != null && phone.StartsWith("05")).WithMessage("Telefon numaraniz '05' ile baslamalidir")
             .Matches(@"^\d{11}$").WithMessage("Telefon numarasi hatali, lutfen tekrar deneyiniz");
 
-        RuleFor(login => login.IsConfirmedInfoText)
+        RuleFor(login => login.IsPrivacyPolicyAccepted)
             .Equal(true).WithMessage("Aydinlatma metnini onaylamaniz gerekmektedir.");
     }
 }

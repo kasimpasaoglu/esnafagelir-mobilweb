@@ -12,5 +12,16 @@ public class MappingProfile : Profile
 
         CreateMap<LoginDTO, LoginVM>().ReverseMap();
 
+        #region DatabaseTipleri Maplemesi
+        CreateMap<Business, BusinessDTO>().ReverseMap();
+        CreateMap<BusinessType, BusinessTypeDTO>().ReverseMap();
+        CreateMap<City, CityDTO>().ReverseMap();
+        CreateMap<ContactRequest, ContactRequestDTO>().ReverseMap();
+        CreateMap<District, DistrictDTO>().ReverseMap();
+        CreateMap<ExpertCategory, ExpertCategoryDTO>().ReverseMap();
+        CreateMap<ExpertRequest, ExpertRequestDTO>().ReverseMap();
+        CreateMap<Role, RoleDTO>().ReverseMap();
+        #endregion
+
     }
 }

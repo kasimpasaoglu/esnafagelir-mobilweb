@@ -7,11 +7,11 @@ public partial class User
 {
     public int UserId { get; set; }
 
-    public Guid DeviceId { get; set; } = new Guid();
+    public Guid DeviceId { get; set; }
 
     public DateTime LastLogin { get; set; }
 
-    public bool IsConfirmedInfoText { get; set; }
+    public bool IsPrivacyPolicyAccepted { get; set; }
 
     public string PhoneNumber { get; set; } = null!;
 

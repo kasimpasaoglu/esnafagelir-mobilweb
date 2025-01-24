@@ -17,7 +17,7 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Quicksand', 'sans-serif'], // Quicksand varsayilan
-        inter: ['Inter', 'sans-serif'] // Inter
+        inter: ['Inter', 'serif'] // Inter
       }
     },
   },
