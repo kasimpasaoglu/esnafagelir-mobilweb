@@ -1,0 +1,9 @@
+@model Login
+<form asp-action="Index" method="post">
+    <div>
+        <label for="PhoneNumber">Cep Telefonu: </label>
+        <input asp-for="PhoneNumber" type="number" name="PhoneNumber">
+        <span asp-validation-for="PhoneNumber"></span>
+    </div>
+    <button type="submit">Gonder</button>
+</form>
