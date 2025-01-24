@@ -1,7 +1,15 @@
-<div class="flex flex-col justify-evenly items-center w-full h-screen text-appText text-center">
-    <h2 class="text-3xl">Bilgilerinize İhtiyacımız Var</h2>
+<div class="flex flex-col justify-evenly items-center w-full h-screen text-appText text-center px-4">
+    <h2 class="text-3xl w-80">Bilgilerinize İhtiyacımız Var</h2>
     <img src="~/images/login/reqDetail.png" alt="Banner">
-    <p class="text-[1rem]">Bu bilgileri size ve işletmenize en uygun haber ve fırsatları belirlemek için kullanacağız.
+    <p class="text-[1rem] font-semibold text-appText w-72">Bu bilgileri size ve işletmenize en uygun haber ve
+        fırsatları
+        belirlemek için kullanacağız.
     </p>
     <a href="/Home/Index">Belki daha sonra</a>
+    @await Html.PartialAsync("_ButtonPartial", new ButtonModel
+{
+    Text = "Devam",
+    IsSubmit = false,
+    LinkUrl = "/Home/Index"
+})
 </div>

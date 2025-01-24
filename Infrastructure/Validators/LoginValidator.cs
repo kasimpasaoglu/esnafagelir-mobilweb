@@ -1,6 +1,6 @@
 using FluentValidation;
 
-public class LoginValidator : AbstractValidator<Login>
+public class LoginValidator : AbstractValidator<LoginVM>
 {
     public LoginValidator()
     {

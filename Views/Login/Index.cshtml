@@ -32,6 +32,11 @@
         </div>
 
         <!-- Submit Button -->
-        @await Html.PartialAsync("_ButtonPartial", "Giris Yap")
+        @await Html.PartialAsync("_ButtonPartial", new ButtonModel
+   {
+       Text = "Giriş Yap",
+       IsSubmit = true,
+   })
+
     </div>
 </form>

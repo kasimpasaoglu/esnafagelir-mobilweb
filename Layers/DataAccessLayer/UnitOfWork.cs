@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore.Storage;
 #region Interface
 public interface IUnitOfWork : IDisposable
 {
-    ILoginRepo Login { get; }
     Task<int> SaveChangesAsync();
     Task RollbackTransactionAsync();
     Task CommitTransactionAsync();
@@ -17,16 +16,12 @@ public class UnitOfWork : IUnitOfWork
     private readonly DataBaseContext _context;
 
     #region Tablolar
-    public ILoginRepo Login { get; private set; }
     #endregion
 
     #region  Ctor
-    public UnitOfWork(DataBaseContext context,
-                      ILoginRepo loginRepo)
+    public UnitOfWork(DataBaseContext context)
     {
         _context = context;
-        Login = loginRepo;
-
     }
     #endregion
 

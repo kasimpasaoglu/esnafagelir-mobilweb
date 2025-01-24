@@ -1,5 +1,17 @@
-@model string
+@model ButtonModel
 
-<button class="bg-appPrimary text-white px-28 py-4 rounded-full mt-4 text-2xl font-bold" type="submit">
-    @Model
+@if (Model.IsSubmit)
+{
+    <!-- Form Submit Butonu -->
+    <button class="bg-appPrimary text-white px-28 py-3 rounded-full text-[1.38rem] font-bold" type="submit">
+    @Model.Text
 </button>
+}
+else
+{
+    <!-- Link Butonu -->
+    <a href="@Model.LinkUrl"
+    class="bg-appPrimary text-white px-28 py-3 rounded-full text-[1.38rem] font-bold text-center no-underline">
+    @Model.Text
+</a>
+}

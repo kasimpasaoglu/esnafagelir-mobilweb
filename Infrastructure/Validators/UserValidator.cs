@@ -4,6 +4,6 @@ public class UserValidator : AbstractValidator<UserVM>
 {
     public UserValidator()
     {
-
+        // todo ?
     }
 }
