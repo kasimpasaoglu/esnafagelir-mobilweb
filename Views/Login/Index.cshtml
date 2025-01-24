@@ -1,5 +1,5 @@
 @model Login
-<form asp-action="Index" method="post">
+<form asp-action="Index" method="post" class="px-4">
 
     <div class="w-full h-screen flex flex-col gap-4 items-center justify-evenly">
 
@@ -14,7 +14,7 @@
             <span class="text-appWarning text-sm" asp-validation-for="PhoneNumber"></span>
             <div class="flex items-center gap-2 mt-4">
                 <div class="flex flex-col gap-5">
-                    <a class="underline text-blue-500 text-sm" href="Login/LegalNotice">Aydinlatma
+                    <a class="" href="Login/LegalNotice">Aydinlatma
                         metnini okudum onayliyorum.
                     </a>
                     <span class="text-appWarning text-sm" asp-validation-for="IsConfirmedInfoText"></span>

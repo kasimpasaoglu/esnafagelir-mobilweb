@@ -683,6 +683,11 @@ video {
   padding-right: 7rem;
 }
 
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
@@ -707,6 +712,11 @@ video {
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
 }
 
 .text-\[1rem\] {
@@ -734,6 +744,11 @@ video {
 .text-appStroke {
   --tw-text-opacity: 1;
   color: rgb(147 147 147 / var(--tw-text-opacity, 1));
+}
+
+.text-appText {
+  --tw-text-opacity: 1;
+  color: rgb(78 78 78 / var(--tw-text-opacity, 1));
 }
 
 .text-appWarning {
@@ -764,6 +779,14 @@ video {
 #root {
   --tw-bg-opacity: 1;
   background-color: rgb(245 245 245 / var(--tw-bg-opacity, 1));
+}
+
+a {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  --tw-text-opacity: 1;
+  color: rgb(59 130 246 / var(--tw-text-opacity, 1));
+  text-decoration-line: underline;
 }
 
 .focus\:border-appPrimary:focus {

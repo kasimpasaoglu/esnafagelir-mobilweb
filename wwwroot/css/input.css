@@ -10,3 +10,7 @@
 #root {
     @apply bg-appBgMain
 }
+
+a {
+    @apply underline text-blue-500 text-sm
+}
