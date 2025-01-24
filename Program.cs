@@ -27,6 +27,12 @@ builder.Services.AddDbContext<DataBaseContext>(option => option.UseSqlServer(bui
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ILoginService, LoginService>();
 
+//session config
+builder.Services.AddSession(option =>
+{
+    option.IdleTimeout = TimeSpan.FromDays(1);
+});
+
 
 var cultureInfo = new CultureInfo("tr-TR");
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
@@ -43,7 +49,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-
+app.UseCookiePolicy();
+app.UseSession();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

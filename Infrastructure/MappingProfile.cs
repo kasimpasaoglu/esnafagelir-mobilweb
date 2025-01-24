@@ -5,14 +5,10 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        #region User Model
-        CreateMap<User, UserDTO>().ReverseMap();
-        CreateMap<UserDTO, UserVM>().ReverseMap();
-        #endregion
-
-        CreateMap<LoginDTO, LoginVM>().ReverseMap();
 
         #region DatabaseTipleri Maplemesi
+        CreateMap<User, UserDTO>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+        CreateMap<UserDTO, UserVM>().ReverseMap().ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
         CreateMap<Business, BusinessDTO>().ReverseMap();
         CreateMap<BusinessType, BusinessTypeDTO>().ReverseMap();
         CreateMap<City, CityDTO>().ReverseMap();

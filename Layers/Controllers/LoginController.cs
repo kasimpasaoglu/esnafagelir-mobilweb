@@ -1,42 +1,88 @@
+using System.Threading.Tasks;
+using AutoMapper;
 using esnafagelir_mobilweb.DMO;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
+
 public class LoginController : Controller
 {
     private readonly ILoginService _loginService;
     private readonly IValidator<LoginVM> _loginValidator;
+    private readonly IMapper _mapper;
+    private CookieOptions CookieOptions { get; set; } = new CookieOptions
+    {
+        Expires = DateTime.Now.AddDays(90),
+        HttpOnly = true,
+        Secure = true,
+        SameSite = SameSiteMode.Strict
+    };
 
-    public LoginController(ILoginService loginService, IValidator<LoginVM> loginValidator)
+    public LoginController(ILoginService loginService, IValidator<LoginVM> loginValidator, IMapper mapper)
     {
         _loginValidator = loginValidator;
         _loginService = loginService;
+        _mapper = mapper;
     }
-    public IActionResult Index()
-    {
-        // query string device id gelecek, veritabaninda sorgulanacak,
-        // ona gore dogru sayfaya yonelndirilecek.
 
-        return View(new LoginVM());
+    public async Task<IActionResult> Index()
+    {
+
+        var phoneNumber = Request.Cookies["PhoneNumber"];
+        if (phoneNumber == null)
+        {
+            return View(new LoginVM()); // telefon numarasi cookie bulunamadi giris yap!
+        }
+
+        // Kullanıcı bilgilerini getir
+        var userDTO = await _loginService.CheckPhoneNumber(phoneNumber);
+        if (userDTO == null)
+        {
+            return View(new LoginVM()); // telefon numarasi db'de yok giris yap!
+        }
+
+        var userVM = _mapper.Map<UserVM>(userDTO); //vm'e donusum
+
+
+        var deviceId = Request.Cookies["DeviceId"];
+        if (deviceId == null || deviceId != userVM.DeviceId.ToString())
+        {
+            return View(new LoginVM()); // device degismis ve ya yok, giris yap!
+        }
+
+        await _loginService.UpdateLoginDetails(userDTO); // LastLogin tarihi guncellensin TODO Hata olursa ekrana goster???
+        HttpContext.Session.SetString("userVm", JsonConvert.SerializeObject(userVM));
+        return RedirectToAction("RequestDetail");
     }
 
     [HttpPost]
-    public IActionResult Index(LoginVM model)
+    public async Task<IActionResult> Index(LoginVM model)
     {
-        // todo cihaz id yi sorgula, kayit varsa tarih sorgula, 
-        // son giristen beri 14 gun gectiyse RequestDetail sayfasina yonlendir, 
-        // 14 gunden azsa anasayfaya
-
         var validationResult = _loginValidator.Validate(model);
         if (!validationResult.IsValid)
         {
-            return View(model);
+            return View(model); // validasyon basarisiz
         }
 
-        // validasyon basarili
-        // todo : servise git kayit olustur, userId degerini al, kayit olusmazsa hata mesaji goster, olusursa RequestDetail sayfasina yonlendir.
-        return RedirectToAction("RequestDetail");
+        // kullanici kimligi olusturma 
+        var user = new UserVM
+        {
+            IsPrivacyPolicyAccepted = model.IsPrivacyPolicyAccepted,
+            PhoneNumber = model.PhoneNumber,
+        };
+        var registeredUserDTO = await _loginService.Register(_mapper.Map<UserDTO>(user)); // kayit denemesi...
+        if (registeredUserDTO != null)
+        {
+            var newUser = _mapper.Map<UserVM>(registeredUserDTO);
+            // kayit basarili cookielere detaylari koy
+            Response.Cookies.Append("PhoneNumber", newUser.PhoneNumber, CookieOptions);
+            Response.Cookies.Append("DeviceId", newUser.DeviceId.ToString(), CookieOptions);
+            HttpContext.Session.SetString("userVm", JsonConvert.SerializeObject(newUser));
+            return RedirectToAction("RequestDetail");
+        }
+        ModelState.AddModelError(string.Empty, "Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyiniz."); // TODO bunu ekranda goster
+        return View(model); // giris basarisiz,
     }
     public IActionResult LegalNotice()
     {
@@ -45,6 +91,22 @@ public class LoginController : Controller
 
     public IActionResult RequestDetail()
     {
+        var userVmJson = HttpContext.Session.GetString("userVm"); // sessiondan kullanci bilgilerini al
+        if (string.IsNullOrEmpty(userVmJson))
+        {
+            // oturum yoksa ve ya suresi dolmussa giris ekranina geri don
+            return RedirectToAction("Index");
+        }
+
+        var userVM = JsonConvert.DeserializeObject<UserVM>(userVmJson);
+        var daysSinceRegister = (DateTime.Now - userVM.RegisterDate).Days;
+        var minsSinceRegister = (DateTime.Now - userVM.RegisterDate).Minutes;
+
+        if (minsSinceRegister > 1 || daysSinceRegister % 14 != 0)
+        {   // eger kullanici yeni login olduysa ve 14 gunde bir bu sayfayi gorecek her giriste
+            return RedirectToAction("Index", "Home");
+        }
+
         return View();
     }
 

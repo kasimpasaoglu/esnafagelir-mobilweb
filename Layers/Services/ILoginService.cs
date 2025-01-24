@@ -1,5 +1,7 @@
 
 public interface ILoginService
 {
-    public Task Register(LoginDTO login);
+    Task<UserDTO> Register(UserDTO model);
+    Task<UserDTO> CheckPhoneNumber(string phoneNumber);
+    Task<bool> UpdateLoginDetails(UserDTO user);
 }
