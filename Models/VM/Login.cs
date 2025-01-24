@@ -1,4 +1,5 @@
 public class Login
 {
-    public string PhoneNumber { get; set; } = null!;
+    public string PhoneNumber { get; set; }
+    public bool IsConfirmedInfoText { get; set; }
 }

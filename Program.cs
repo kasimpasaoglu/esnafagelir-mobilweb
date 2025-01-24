@@ -1,3 +1,4 @@
+using System.Globalization;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 
@@ -5,9 +6,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // fluent validation
-builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationAutoValidation(options =>
+{
+    options.DisableDataAnnotationsValidation = true; // asp.net core default validationlarini devre disi birak
+});
 builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
 
 // automapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -15,7 +20,9 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // DI's
 builder.Services.AddScoped<ILoginRepo, LoginRepo>();
 builder.Services.AddScoped<ILoginService, LoginService>();
-
+var cultureInfo = new CultureInfo("tr-TR");
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

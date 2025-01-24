@@ -1,9 +1,37 @@
 @model Login
 <form asp-action="Index" method="post">
-    <div>
-        <label for="PhoneNumber">Cep Telefonu: </label>
-        <input asp-for="PhoneNumber" type="number" name="PhoneNumber">
-        <span asp-validation-for="PhoneNumber"></span>
+
+    <div class="w-full h-screen flex flex-col gap-4 items-center justify-evenly">
+
+        <!-- Logo -->
+        <img src="~/images/login/logo.png" alt="logo">
+
+
+        <div class="flex flex-col gap-5">
+            <label for="PhoneNumber" class="text-appStroke text-xs font-inter font-normal">Cep Telefonu</label>
+            <input class="border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
+                asp-for="PhoneNumber" type="number" name="PhoneNumber" placeholder="05_ _  _ _ _  _ _ _ _">
+            <span class="text-appWarning text-sm" asp-validation-for="PhoneNumber"></span>
+            <div class="flex items-center gap-2 mt-4">
+                <div class="flex flex-col gap-5">
+                    <a class="underline text-blue-500 text-sm" href="Login/LegalNotice">Aydinlatma
+                        metnini okudum onayliyorum.
+                    </a>
+                    <span class="text-appWarning text-sm" asp-validation-for="IsConfirmedInfoText"></span>
+                </div>
+                <label class="relative inline-flex items-center">
+                    <input type="checkbox" asp-for="IsConfirmedInfoText" name="IsConfirmedInfoText"
+                        class="sr-only peer">
+                    <div class="w-[3.20rem] h-8 bg-gray-200 rounded-full peer peer-checked:bg-green-600">
+                    </div>
+                    <div
+                        class="absolute top-1 left-1 bg-white border border-gray-300 rounded-full h-6 w-6 peer-checked:translate-x-[calc(100%-0.30rem)] transition-transform">
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        @await Html.PartialAsync("_ButtonPartial", "Giris Yap")
     </div>
-    <button type="submit">Gonder</button>
 </form>

@@ -6,7 +6,10 @@ public class LoginValidator : AbstractValidator<Login>
     {
         RuleFor(login => login.PhoneNumber)
             .NotEmpty().WithMessage("Bu alan doldurulmalidir")
-            .Must(phone => phone.StartsWith("05")).WithMessage("Telefon numaraniz '05' ile baslamalidir")
+            .Must(phone => phone != null && phone.StartsWith("05")).WithMessage("Telefon numaraniz '05' ile baslamalidir")
             .Matches(@"^\d{11}$").WithMessage("Telefon numarasi hatali, lutfen tekrar deneyiniz");
+
+        RuleFor(login => login.IsConfirmedInfoText)
+            .Equal(true).WithMessage("Aydinlatma metnini onaylamaniz gerekmektedir.");
     }
 }
