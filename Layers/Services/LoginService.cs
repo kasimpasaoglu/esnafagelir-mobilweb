@@ -47,20 +47,24 @@ namespace Infrastructure.Services
 
         }
 
-        public async Task<UserDTO> CheckPhoneNumber(string phoneNumber)
+        public async Task<UserDTO> FindByPhoneNumber(string phoneNumber)
         {
-            var user = _userRepo.FindAsync(x => x.PhoneNumber == phoneNumber).Result.FirstOrDefault();
+            var request = await _userRepo.FindAsync(x => x.PhoneNumber == phoneNumber);
+            var user = request.FirstOrDefault();
+            // gecici cozum!!!
+            // expression ile calisan FindSingle Gerenirc metodu lazim
             return _mapper.Map<UserDTO>(user);
         }
 
-        public async Task<bool> UpdateLoginDetails(UserDTO user)
+        public async Task<bool> UpdateLastLoginDate(UserDTO user)
         {
             var existingUser = await _userRepo.GetByIdAsync(user.UserId);
             if (existingUser == null)
             {
                 throw new Exception("User not found");
+                // DB'de bir sorun yoksa bu asamaya geldiyse kullancinin bulunmasi gereklidir
             }
-
+            // Update metodu hata verdi??
             existingUser.LastLogin = DateTime.Now;
             return await _context.SaveChangesAsync() > 0;
         }

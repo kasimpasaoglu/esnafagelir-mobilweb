@@ -36,7 +36,7 @@ public class LoginController : Controller
         }
 
         // Kullanıcı bilgilerini getir
-        var userDTO = await _loginService.CheckPhoneNumber(phoneNumber);
+        var userDTO = await _loginService.FindByPhoneNumber(phoneNumber);
         if (userDTO == null)
         {
             return View(new LoginVM()); // telefon numarasi db'de yok giris yap!
@@ -51,7 +51,7 @@ public class LoginController : Controller
             return View(new LoginVM()); // device degismis ve ya yok, giris yap!
         }
 
-        await _loginService.UpdateLoginDetails(userDTO); // LastLogin tarihi guncellensin TODO Hata olursa ekrana goster???
+        await _loginService.UpdateLastLoginDate(userDTO); // LastLogin tarihi guncellensin TODO Hata olursa ekrana goster???
         HttpContext.Session.SetString("userVm", JsonConvert.SerializeObject(userVM));
         return RedirectToAction("RequestDetail");
     }
@@ -94,7 +94,7 @@ public class LoginController : Controller
         var userVmJson = HttpContext.Session.GetString("userVm"); // sessiondan kullanci bilgilerini al
         if (string.IsNullOrEmpty(userVmJson))
         {
-            // oturum yoksa ve ya suresi dolmussa giris ekranina geri don
+            // oturum yoksa giris ekranina geri don
             return RedirectToAction("Index");
         }
 
@@ -102,11 +102,14 @@ public class LoginController : Controller
         var daysSinceRegister = (DateTime.Now - userVM.RegisterDate).Days;
         var minsSinceRegister = (DateTime.Now - userVM.RegisterDate).Minutes;
 
-        if (minsSinceRegister > 1 || daysSinceRegister % 14 != 0)
-        {   // eger kullanici yeni login olduysa ve 14 gunde bir bu sayfayi gorecek her giriste
+        if (minsSinceRegister > 1 && daysSinceRegister % 14 != 0)
+        {   // eger kullanici kayit yapali 1.dk dan fazla olduysa
+            // ve eger kayit tarihinden itibaren 14 ve 14. kati gun gecmediyse
+            // ana sayfaya gidecek
             return RedirectToAction("Index", "Home");
         }
 
+        // 1 dk dan az ve 14. ve kati gunlerde bu sayfada kalacak
         return View();
     }
 
