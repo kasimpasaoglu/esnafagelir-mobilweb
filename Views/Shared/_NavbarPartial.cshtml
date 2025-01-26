@@ -1,0 +1,33 @@
+@model string
+
+@{
+    // ikonlar
+    var icons = new Dictionary<string, (string Passive, string Active)>
+{
+{ "Home", ("/images/shared/navbarIcons/HomePageIcon.svg", "/images/shared/navbarIcons/HomeActive.svg") },
+{ "Expert", ("/images/shared/navbarIcons/ExpertPageIcon.svg", "/images/shared/navbarIcons/ExpertActive.svg") },
+{ "Opportunities", ("/images/shared/navbarIcons/OpportunitiesIcon.svg",
+"/images/shared/navbarIcons/OpportunitiesActive.svg") },
+{ "News", ("/images/shared/navbarIcons/NewsIcon.svg", "/images/shared/navbarIcons/NewsActive.svg") }
+};
+
+    // URL'ler !! Ayni sirada yazilmali
+    var links = new Dictionary<string, string>
+{
+{ "Home", "/Home/Index" },
+{ "Expert", "/Expert/Index" },
+{ "Opportunities", "/Opportunities/Index" },
+{ "News", "/News/Index" }
+};
+}
+
+
+
+<nav class="flex items-center justify-evenly fixed bottom-0 right-0 bg-appCartBg rounded-t-3xl border-t-2 py-3 w-full">
+    @foreach (var icon in icons)
+    {
+        <a class="text-appPrimary" href="@links[icon.Key]">
+            <img src="@(Model == icon.Key ? icon.Value.Active : icon.Value.Passive)" alt="@icon.Key Icon" />
+        </a>
+    }
+</nav>
