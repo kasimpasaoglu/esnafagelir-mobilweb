@@ -1,0 +1,45 @@
+@model RegisterVM
+
+@await Html.PartialAsync("_HeaderPartial", new HeaderModel
+{
+    Text = "Profil Bilgileri",
+    ArrowLink = "/Login/Index",
+})
+<form action="/Register/First" method="post" class="px-4">
+    <div class="w-full min-h-[calc(100vh-3.8rem)] flex flex-col gap-4 items-center justify-evenly">
+        <div class="w-full flex flex-col gap-2">
+            <div>
+                <label asp-for="User.Name" class="text-appStroke text-xs font-inter font-normal">Ad</label>
+                <input class="border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
+                    asp-for="User.Name" type="text" placeholder="Erdoğan Orhun">
+                <span class="text-appWarning text-sm" asp-validation-for="User.Name"></span>
+            </div>
+            <div>
+                <label asp-for="User.Surname" class="text-appStroke text-xs font-inter font-normal">Soyad</label>
+                <input class="border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
+                    asp-for="User.Surname" type="text" placeholder="Özbalkan">
+                <span class="text-appWarning text-sm" asp-validation-for="User.Surname"></span>
+            </div>
+            <div>
+                <label asp-for="SelectedRoleId"
+                    class="text-appStroke text-xs font-inter font-normal">İşletmedeki Rolü</label>
+                @Html.DropDownListFor(
+                         s => s.SelectedRoleId,
+                         new SelectList(Model.Roles, "RoleId", "RoleName", Model.SelectedRoleId),
+                         "Seçiniz",
+                         new {@class = "border-b-2 text-[1rem] bg-appBg border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2" }
+                         )
+                         <span class="text-appWarning text-sm" asp-validation-for="SelectedRoleId"></span>
+            </div>
+        </div>
+
+        <div class="w-full h-full flex flex-col items-center justify-center gap-3">
+            <a  href="/Home/Index">Belki daha sonra</a>
+            @await Html.PartialAsync("_ButtonPartial", new ButtonModel
+               {
+                   Text = "Kaydet",
+                   IsSubmit = true
+               })
+        </div>
+    </div>
+</form>

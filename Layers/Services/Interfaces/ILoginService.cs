@@ -1,7 +1,7 @@
 
 public interface ILoginService
 {
-    Task<UserDTO> Register(UserDTO model);
+    Task<UserDTO> FindByDeviceId(Guid deviceId);
     Task<UserDTO> FindByPhoneNumber(string phoneNumber);
     Task<bool> UpdateLastLoginDate(UserDTO user);
 }

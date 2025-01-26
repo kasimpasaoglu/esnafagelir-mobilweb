@@ -2,8 +2,6 @@ using System.Globalization;
 using esnafagelir_mobilweb.DataAccessLayer;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Infrastructure.Repositories;
-using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,9 +21,12 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // DB
 builder.Services.AddDbContext<DataBaseContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-// DI's
+
+// Injections's
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IRegisterService, RegisterService>();
+builder.Services.AddScoped<ISelectorsService, SelectorsService>();
 
 //session config
 builder.Services.AddSession(option =>

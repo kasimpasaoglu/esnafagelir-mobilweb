@@ -16,7 +16,7 @@ public class RegisterFirstStep : AbstractValidator<RegisterVM>
             .Matches(@"^[a-zA-ZğüşıöçĞÜŞİÖÇ]+$").WithMessage("Soyad sadece harflerden oluşmalıdır.");
 
         RuleFor(x => x.SelectedRoleId)
-            .GreaterThan(0).WithMessage("Lütfen işletmedeki rolünüzü seçiniz.");
+            .Must(id => id > 0).WithMessage("Lütfen işletmedeki rolünüzü seçiniz.");
         #endregion
 
     }

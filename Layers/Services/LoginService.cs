@@ -1,72 +1,55 @@
-using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using esnafagelir_mobilweb.DMO;
 using esnafagelir_mobilweb.DataAccessLayer;
 
-namespace Infrastructure.Services
+
+public class LoginService : ILoginService
 {
-    public class LoginService : ILoginService
+    private readonly IGenericRepository<User> _userRepo;
+    private readonly IGenericRepository<Business> _bussinesRepo;
+    private readonly DataBaseContext _context;
+    private readonly IMapper _mapper;
+
+    public LoginService(
+        IGenericRepository<User> userRepo,
+        DataBaseContext context,
+        IMapper mapper,
+        IGenericRepository<Business> bussinesRepo
+        )
     {
-        private readonly IGenericRepository<User> _userRepo;
-        private readonly IGenericRepository<Business> _bussinesRepo;
-        private readonly DataBaseContext _context;
-        private readonly IMapper _mapper;
+        _userRepo = userRepo;
+        _bussinesRepo = bussinesRepo;
+        _context = context;
+        _mapper = mapper;
+    }
 
-        public LoginService(
-            IGenericRepository<User> userRepo,
-            DataBaseContext context,
-            IMapper mapper,
-            IGenericRepository<Business> bussinesRepo
-            )
+    public async Task<UserDTO> FindByDeviceId(Guid deviceId)
+    {
+        var request = await _userRepo.FindAsync(x => x.DeviceId == deviceId);
+        var user = request.FirstOrDefault(); // gecici cozum!!!
+        return _mapper.Map<UserDTO>(user);
+    }
+
+    public async Task<UserDTO> FindByPhoneNumber(string phoneNumber)
+    {
+        var request = await _userRepo.FindAsync(x => x.PhoneNumber == phoneNumber);
+        var user = request.FirstOrDefault(); // gecici cozum!!!
+
+        // TODO: expression ile calisan FindSingle Gerenirc metodu lazim
+        return _mapper.Map<UserDTO>(user);
+    }
+
+    public async Task<bool> UpdateLastLoginDate(UserDTO user)
+    {
+        var existingUser = await _userRepo.GetByIdAsync(user.UserId);
+        if (existingUser == null)
         {
-            _userRepo = userRepo;
-            _bussinesRepo = bussinesRepo;
-            _context = context;
-            _mapper = mapper;
+            throw new Exception("User not found");
+            // DB'de bir sorun yoksa bu asamaya geldiyse kullancinin bulunmasi gereklidir
         }
-
-        public async Task<UserDTO> Register(UserDTO model)
-        {   // kayit yapar, basariliysa kaydedilen modeli doner, basarisizsa null
-
-            // ilk loginde roleid ve bussines id 0 olarak girilecek
-            // database'de bu degerlere karsilik 'unknown' yazar
-            // kullanici sonraki adimda bilgilerini girerse ve ya daha sonra girmek isterse kullanici sorgulanip, update islemi yapilacak
-            // kayit isleminden once sorgulama yapilmasi lazim ona gore ilerlenecek.
-
-
-            var user = _mapper.Map<User>(model);
-            user.DeviceId = Guid.NewGuid();
-            user.LastLogin = DateTime.Now;
-            user.RegisterDate = DateTime.Now;
-
-
-            await _userRepo.AddAsync(user);
-            var result = await _context.SaveChangesAsync();
-            return result > 0 ? _mapper.Map<UserDTO>(user) : null; //basariliysa modeli don degilse null
-
-        }
-
-        public async Task<UserDTO> FindByPhoneNumber(string phoneNumber)
-        {
-            var request = await _userRepo.FindAsync(x => x.PhoneNumber == phoneNumber);
-            var user = request.FirstOrDefault();
-            // gecici cozum!!!
-            // expression ile calisan FindSingle Gerenirc metodu lazim
-            return _mapper.Map<UserDTO>(user);
-        }
-
-        public async Task<bool> UpdateLastLoginDate(UserDTO user)
-        {
-            var existingUser = await _userRepo.GetByIdAsync(user.UserId);
-            if (existingUser == null)
-            {
-                throw new Exception("User not found");
-                // DB'de bir sorun yoksa bu asamaya geldiyse kullancinin bulunmasi gereklidir
-            }
-            // Update metodu hata verdi??
-            existingUser.LastLogin = DateTime.Now;
-            return await _context.SaveChangesAsync() > 0;
-        }
+        // Update metodu hata verdi??
+        existingUser.LastLogin = DateTime.Now;
+        return await _context.SaveChangesAsync() > 0;
     }
 }
