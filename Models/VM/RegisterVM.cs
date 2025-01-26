@@ -1,9 +1,15 @@
-public class RegisterVM
+public class RegisterFirstVM
+{
+    public UserVM User { get; set; } = new UserVM();
+    public int SelectedRoleId { get; set; }
+    public List<RoleVM> Roles { get; set; }
+
+}
+
+public class RegisterSecondVM
 {
     public UserVM User { get; set; } = new UserVM();
     public BusinessVM Business { get; set; } = new BusinessVM();
-    public int SelectedRoleId { get; set; }
-    public List<RoleVM> Roles { get; set; }
     public int SelectedBusinessTypeId { get; set; }
     public List<BusinessTypeVM> BusinessTypes { get; set; }
     public int SelectedCityId { get; set; }

@@ -1,4 +1,4 @@
-@model RegisterVM
+@model RegisterFirstVM
 
 @await Html.PartialAsync("_HeaderPartial", new HeaderModel
 {
@@ -25,7 +25,7 @@
                     class="text-appStroke text-xs font-inter font-normal">İşletmedeki Rolü</label>
                 @Html.DropDownListFor(
                          s => s.SelectedRoleId,
-                         new SelectList(Model.Roles, "RoleId", "RoleName", Model.SelectedRoleId),
+                         new SelectList(Model.Roles, "RoleId", "RoleName"),
                          "Seçiniz",
                          new {@class = "border-b-2 text-[1rem] bg-appBg border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2" }
                          )

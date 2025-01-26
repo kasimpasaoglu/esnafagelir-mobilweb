@@ -1,6 +1,6 @@
 using FluentValidation;
 
-public class RegisterFirstStep : AbstractValidator<RegisterVM>
+public class RegisterFirstStep : AbstractValidator<RegisterFirstVM>
 {
     public RegisterFirstStep()
     {
@@ -16,7 +16,7 @@ public class RegisterFirstStep : AbstractValidator<RegisterVM>
             .Matches(@"^[a-zA-ZğüşıöçĞÜŞİÖÇ]+$").WithMessage("Soyad sadece harflerden oluşmalıdır.");
 
         RuleFor(x => x.SelectedRoleId)
-            .Must(id => id > 0).WithMessage("Lütfen işletmedeki rolünüzü seçiniz.");
+            .GreaterThan(0).WithMessage("Lütfen işletmedeki rolünüzü seçiniz.");
         #endregion
 
     }

@@ -1,6 +1,6 @@
 using FluentValidation;
 
-public class RegisterSecondStep : AbstractValidator<RegisterVM>
+public class RegisterSecondStep : AbstractValidator<RegisterSecondVM>
 {
     public RegisterSecondStep()
     {

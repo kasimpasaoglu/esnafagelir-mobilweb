@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using esnafagelir_mobilweb.DMO;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -8,6 +9,8 @@ public class RegisterController : Controller
 {
     private readonly IRegisterService _registerService;
     private readonly ISelectorsService _selectorsService;
+    private readonly IValidator<RegisterFirstVM> _firstStepValidator;
+    private readonly IValidator<RegisterSecondVM> _secondStepValidator;
     private readonly IMapper _mapper;
 
     private readonly List<RoleVM> _rolesList;
@@ -17,11 +20,15 @@ public class RegisterController : Controller
     (
         IRegisterService registerService,
         ISelectorsService selectorsService,
+        IValidator<RegisterFirstVM> firstStepValidator,
+        IValidator<RegisterSecondVM> secondStepValidator,
         IMapper mapper
     )
     {
         _registerService = registerService;
         _selectorsService = selectorsService;
+        _firstStepValidator = firstStepValidator;
+        _secondStepValidator = secondStepValidator;
         _mapper = mapper;
 
         _rolesList = _mapper.Map<List<RoleVM>>(_selectorsService.GetRolesList().Result.ToList());
@@ -35,30 +42,21 @@ public class RegisterController : Controller
         if (string.IsNullOrEmpty(sessionModel)) return RedirectToAction("Index", "Login");
         var user = JsonConvert.DeserializeObject<UserVM>(sessionModel);
 
-        var model = new RegisterVM
+        var model = new RegisterFirstVM
         {
             User = user,
             Roles = _rolesList,
         };
-
         return View(model);
     }
 
     [HttpPost]
-    public IActionResult First(RegisterVM model)
+    public IActionResult First(RegisterFirstVM model)
     {
-        // ASP.NET Core'un eklediği hatayı temizle
-        ModelState.Remove("SelectedRoleId");
-
-        var firstStepValidator = new RegisterFirstStep();
-        var validation = firstStepValidator.Validate(model);
+        var validation = _firstStepValidator.Validate(model);
 
         if (!validation.IsValid)
         {
-            foreach (var error in validation.Errors)
-            {
-                ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-            }
             model.Roles = _rolesList;
             return View(model);
         }
@@ -78,15 +76,10 @@ public class RegisterController : Controller
 
     public async Task<IActionResult> Second()
     {
-        var registerVmData = TempData["RegisterVM"] as string;
-
-        if (string.IsNullOrEmpty(registerVmData))
-        {
-            return RedirectToAction("First"); // TempData'da RegisterVM yoksa First aksiyonuna yönlendir
-        }
-
-        var model = JsonConvert.DeserializeObject<RegisterVM>(registerVmData);
-        // var model = new RegisterVM();
+        var stringModel = HttpContext.Session.GetString("userVm");
+        var user = JsonConvert.DeserializeObject<UserVM>(stringModel);
+        var model = new RegisterSecondVM();
+        model.User = user;
         model.BusinessTypes = _businessTypesList;
         model.Cities = _cityList;
         model.Districts = new List<DistrictVM>();//bos liste gidecek, listeyi on tarafda JS ile olustur
@@ -94,15 +87,25 @@ public class RegisterController : Controller
     }
 
     [HttpPost]
-    public IActionResult Second(RegisterVM model)
+    public IActionResult Second(RegisterSecondVM model)
     {
-        var secondStepValidator = new RegisterSecondStep();
-        var validationResult = secondStepValidator.Validate(model);
+        var stringModel = HttpContext.Session.GetString("userVm");
+        var user = JsonConvert.DeserializeObject<UserVM>(stringModel);
+        model.User = user;
+        model.BusinessTypes = _businessTypesList;
+        model.Cities = _cityList;
+        model.Districts = new List<DistrictVM>();
+
+        var validationResult = _secondStepValidator.Validate(model);
         if (!validationResult.IsValid)
         {
             // todo
-            return View();
+            return View(model);
         }
+        var businessToRegister = model.Business;
+        var userToRegister = model.User;
+        // todo kayit yapildiktan sonra databasede bussines id verileek, userdaki bussines id ile ayni olmasi lazim
+        // bu adimda yapilabilir
 
         return RedirectToAction("Index", "Home");
     }
