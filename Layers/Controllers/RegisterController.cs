@@ -87,7 +87,7 @@ public class RegisterController : Controller
     }
 
     [HttpPost]
-    public IActionResult Second(RegisterSecondVM model)
+    public async Task<IActionResult> Second(RegisterSecondVM model)
     {
         var stringModel = HttpContext.Session.GetString("userVm");
         var user = JsonConvert.DeserializeObject<UserVM>(stringModel);
@@ -102,11 +102,18 @@ public class RegisterController : Controller
             // todo
             return View(model);
         }
-        var businessToRegister = model.Business;
-        var userToRegister = model.User;
-        // todo kayit yapildiktan sonra databasede bussines id verileek, userdaki bussines id ile ayni olmasi lazim
-        // bu adimda yapilabilir
-
+        model.Business.BusinessTypeId = model.SelectedBusinessTypeId;
+        model.Business.DistrictId = model.SelectedDisrictId;
+        var businessToRegister = _mapper.Map<BusinessDTO>(model.Business);
+        var userToRegister = _mapper.Map<UserDTO>(model.User);
+        var result = await _registerService.RegisterUserWithBusiness(userToRegister, businessToRegister);
+        if (!result)
+        {
+            ModelState.AddModelError(string.Empty, "Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyiniz.");
+            return View(model);
+        }
+        HttpContext.Session.SetString("userVm", JsonConvert.SerializeObject(model.User));
+        HttpContext.Session.SetString("bussinesVm", JsonConvert.SerializeObject(model.Business));
         return RedirectToAction("Index", "Home");
     }
 
