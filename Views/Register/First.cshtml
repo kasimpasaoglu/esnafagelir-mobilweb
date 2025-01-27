@@ -27,7 +27,7 @@
                          s => s.SelectedRoleId,
                          new SelectList(Model.Roles, "RoleId", "RoleName"),
                          "Seçiniz",
-                         new {@class = "border-b-2 text-[1rem] bg-appBg border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2" }
+                         new {@class = "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2" }
                          )
                          <span class="text-appWarning text-sm" asp-validation-for="SelectedRoleId"></span>
             </div>

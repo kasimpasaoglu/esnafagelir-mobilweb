@@ -13,7 +13,7 @@ public class RegisterFirstStep : AbstractValidator<RegisterFirstVM>
         RuleFor(x => x.User.Surname)
             .NotEmpty().WithMessage("Soyad alanı zorunludur.")
             .Length(2, 30).WithMessage("Soyad en az 2, en fazla 30 karakter olmalıdır.")
-            .Matches(@"^[a-zA-ZğüşıöçĞÜŞİÖÇ]+$").WithMessage("Soyad sadece harflerden oluşmalıdır.");
+            .Matches(@"^[a-zA-ZğüşıöçĞÜŞİÖÇ ]+$").WithMessage("Soyad sadece harflerden oluşmalıdır.");
 
         RuleFor(x => x.SelectedRoleId)
             .GreaterThan(0).WithMessage("Lütfen işletmedeki rolünüzü seçiniz.");

@@ -582,10 +582,6 @@ video {
   position: relative;
 }
 
-.sticky {
-  position: sticky;
-}
-
 .-top-1 {
   top: -0.25rem;
 }
@@ -614,16 +610,20 @@ video {
   top: 0.25rem;
 }
 
-.top-auto {
-  top: auto;
+.col-span-1 {
+  grid-column: span 1 / span 1;
 }
 
-.bottom-full {
-  bottom: 100%;
+.col-span-2 {
+  grid-column: span 2 / span 2;
 }
 
-.top-full {
-  top: 100%;
+.col-span-3 {
+  grid-column: span 3 / span 3;
+}
+
+.mb-14 {
+  margin-bottom: 3.5rem;
 }
 
 .mr-5 {
@@ -634,16 +634,8 @@ video {
   margin-top: 1rem;
 }
 
-.mb-6 {
-  margin-bottom: 1.5rem;
-}
-
-.mb-10 {
-  margin-bottom: 2.5rem;
-}
-
-.mb-14 {
-  margin-bottom: 3.5rem;
+.mt-5 {
+  margin-top: 1.25rem;
 }
 
 .flex {
@@ -652,6 +644,14 @@ video {
 
 .inline-flex {
   display: inline-flex;
+}
+
+.grid {
+  display: grid;
+}
+
+.hidden {
+  display: none;
 }
 
 .h-12 {
@@ -682,10 +682,6 @@ video {
   height: 100vh;
 }
 
-.h-10 {
-  height: 2.5rem;
-}
-
 .min-h-\[calc\(100vh-3\.8rem\)\] {
   min-height: calc(100vh - 3.8rem);
 }
@@ -710,10 +706,6 @@ video {
   width: 18rem;
 }
 
-.w-8 {
-  width: 2rem;
-}
-
 .w-80 {
   width: 20rem;
 }
@@ -726,16 +718,16 @@ video {
   width: 100%;
 }
 
-.w-10 {
-  width: 2.5rem;
-}
-
 .max-w-\[100vm\] {
   max-width: 100vm;
 }
 
 .flex-shrink-0 {
   flex-shrink: 0;
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .flex-col {
@@ -786,6 +778,10 @@ video {
   gap: 1.5rem;
 }
 
+.gap-8 {
+  gap: 2rem;
+}
+
 .gap-\[2\.375rem\] {
   gap: 2.375rem;
 }
@@ -819,8 +815,17 @@ video {
   border-bottom-width: 2px;
 }
 
+.border-b-\[1px\] {
+  border-bottom-width: 1px;
+}
+
 .border-t-2 {
   border-top-width: 2px;
+}
+
+.border-appStroke {
+  --tw-border-opacity: 1;
+  border-color: rgb(147 147 147 / var(--tw-border-opacity, 1));
 }
 
 .border-gray-300 {
@@ -841,6 +846,11 @@ video {
 .bg-appPrimary {
   --tw-bg-opacity: 1;
   background-color: rgb(246 121 44 / var(--tw-bg-opacity, 1));
+}
+
+.bg-appSecondary {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 128 55 / var(--tw-bg-opacity, 1));
 }
 
 .bg-gray-200 {
@@ -888,6 +898,10 @@ video {
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
+}
+
+.pb-1 {
+  padding-bottom: 0.25rem;
 }
 
 .pb-3 {
@@ -949,6 +963,11 @@ video {
 .text-appPrimary {
   --tw-text-opacity: 1;
   color: rgb(246 121 44 / var(--tw-text-opacity, 1));
+}
+
+.text-appSecondary {
+  --tw-text-opacity: 1;
+  color: rgb(0 128 55 / var(--tw-text-opacity, 1));
 }
 
 .text-appStroke {

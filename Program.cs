@@ -27,6 +27,7 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IRegisterService, RegisterService>();
 builder.Services.AddScoped<ISelectorsService, SelectorsService>();
+builder.Services.AddScoped<IUpdateService, UpdateService>();
 
 //session config
 builder.Services.AddSession(option =>

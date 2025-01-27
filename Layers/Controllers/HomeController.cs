@@ -2,15 +2,38 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using esnafagelir_mobilweb.Models;
 using Newtonsoft.Json;
+using AutoMapper;
+using FluentValidation;
+using System.Threading.Tasks;
 
 namespace esnafagelir_mobilweb.Controllers;
 
 public class HomeController : Controller
 {
+    private readonly ISelectorsService _selectorsService;
+    private readonly IUpdateService _updateService;
+    private readonly IMapper _mapper;
+    private readonly IValidator<MyProfileVM> _updateValidator;
 
-    public HomeController()
+    private readonly List<RoleVM> _rolesList;
+    private readonly List<BusinessTypeVM> _businessTypesList;
+    private CookieOptions CookieOptions { get; set; } = new CookieOptions
     {
+        Expires = DateTime.Now.AddDays(90),
+        HttpOnly = true,
+        Secure = true,
+        SameSite = SameSiteMode.Strict
+    };
 
+    public HomeController(ISelectorsService selectorsService, IMapper mapper, IValidator<MyProfileVM> updateValidator, IUpdateService updateService)
+    {
+        _selectorsService = selectorsService;
+        _updateService = updateService;
+        _mapper = mapper;
+        _updateValidator = updateValidator;
+
+        _rolesList = _mapper.Map<List<RoleVM>>(_selectorsService.GetRolesList().Result.ToList());
+        _businessTypesList = _mapper.Map<List<BusinessTypeVM>>(_selectorsService.GetBusinessTypesList().Result.ToList());
     }
 
     public IActionResult Index()
@@ -21,12 +44,15 @@ public class HomeController : Controller
             return RedirectToAction("Index", "Login");
         }
         var user = JsonConvert.DeserializeObject<UserVM>(userString);
+
+        #region Carousel cartlari gecici olarak elle dolduruldu
         List<CardMainModel> cards =
         [
             new CardMainModel { Title = "Brand Name" , Description = "Tüm alışverişlerde geçerli özel fırsatlar bu kampanyada", ImgUrl = "/images/home/maincardDemo.png"},
             new CardMainModel { Title = "Brand Name" , Description = "Tüm alışverişlerde geçerli esnaflara özel fırsatlar bu kampanyada", ImgUrl = "/images/home/maincardDemo.png"},
             new CardMainModel { Title = "Brand Name" , Description = "Tüm alışverişlerde geçerli özel fırsatlar bu kampanyada", ImgUrl = "/images/home/maincardDemo.png"},
         ];
+        #endregion
 
         var indexVm = new HomeIndexVM()
         {
@@ -38,10 +64,123 @@ public class HomeController : Controller
     }
 
 
+    public IActionResult MyProfile()
+    {
+        var userString = HttpContext.Session.GetString("userVm");
+        if (string.IsNullOrEmpty(userString))
+        {
+            return RedirectToAction("Index", "Login");
+        }
+
+        var user = JsonConvert.DeserializeObject<UserVM>(userString); // user
+
+        var businessString = HttpContext.Session.GetString("businessVm");
+        if (string.IsNullOrEmpty(businessString))
+        {
+            return RedirectToAction("Index", "Login");
+        }
+        var business = JsonConvert.DeserializeObject<BusinessVM>(businessString); // business
+
+        return View(new MyProfileVM
+        {
+            User = user,
+            Business = business,
+            Roles = _rolesList,
+            BusinessTypes = _businessTypesList,
+            SelectedRoleId = user.RoleId,
+            SelectedBusinessTypeId = business.BusinessTypeId,
+        });
+    }
+    [HttpPost]
+    public async Task<IActionResult> MyProfile(MyProfileVM model)
+    {
+        var userString = HttpContext.Session.GetString("userVm");
+        if (string.IsNullOrEmpty(userString))
+        {
+            return RedirectToAction("Index", "Login");
+        }
+
+        var user = JsonConvert.DeserializeObject<UserVM>(userString); // user
+
+        var businessString = HttpContext.Session.GetString("businessVm");
+        if (string.IsNullOrEmpty(businessString))
+        {
+            return RedirectToAction("Index", "Login");
+        }
+        var business = JsonConvert.DeserializeObject<BusinessVM>(businessString); // business
+
+
+        if (!model.IsEditMode)
+        {   // edit mode ac, modeli toparla gonder
+            ModelState.Clear();
+            model.IsEditMode = true;
+            model.User = user;
+            model.Business = business;
+            model.Roles = _rolesList;
+            model.BusinessTypes = _businessTypesList;
+            model.SelectedRoleId = user.RoleId;
+            model.SelectedBusinessTypeId = business.BusinessTypeId;
+            return View(model);
+        }
+        var validationResult = _updateValidator.Validate(model);
+
+        if (!validationResult.IsValid)
+        {
+            model.Roles = _rolesList;
+            model.BusinessTypes = _businessTypesList;
+            return View(model);
+        }
+
+        user.Name = model.User.Name;
+        user.Surname = model.User.Surname;
+        user.PhoneNumber = model.User.PhoneNumber;
+        user.RoleId = model.SelectedRoleId;
+        business.BusinessName = model.Business.BusinessName;
+        business.BusinessTypeId = model.SelectedBusinessTypeId;
+        business.Address = model.Business.Address;
+
+        var userDTO = _mapper.Map<UserDTO>(user);
+        var businessDto = _mapper.Map<BusinessDTO>(business);
+        var result = await _updateService.UpdateUserAndBussines(userDTO, businessDto);
+        if (result > 0)
+        {
+            model.IsUpdatedSuccesfully = true;
+        }
+
+
+        model.IsEditMode = false;
+        model.User = user;
+        model.Business = business;
+        model.Roles = _rolesList;
+        model.BusinessTypes = _businessTypesList;
+
+        HttpContext.Session.SetString("userVm", JsonConvert.SerializeObject(user));
+        HttpContext.Session.SetString("businessVm", JsonConvert.SerializeObject(business));
+        Response.Cookies.Append("PhoneNumber", user.PhoneNumber, CookieOptions);
+        Response.Cookies.Append("DeviceId", user.DeviceId.ToString(), CookieOptions);
+
+        return View(model);
+    }
+
+
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateAllowsCoop([FromQuery] int businessId, [FromQuery] bool allowsCoop)
+    {
+        var result = await _updateService.UpdateCoopDecision(businessId, allowsCoop);
+        if (result > 0)
+        {
+            var bussinesVm = JsonConvert.DeserializeObject<BusinessVM>(HttpContext.Session.GetString("businessVm"));
+            bussinesVm.AllowsCooperation = allowsCoop;
+            HttpContext.Session.SetString("businessVm", JsonConvert.SerializeObject(bussinesVm));
+            return Ok();
+        }
+        else return BadRequest("Güncelleme sırasında bir hata oluştu.");
     }
 }

@@ -40,6 +40,15 @@ public class LoginService : ILoginService
         return _mapper.Map<UserDTO>(user);
     }
 
+    public async Task<BusinessDTO> FindBusinessById(int id)
+    {
+        var request = await _bussinesRepo.FindAsync(x => x.BusinessId == id);
+        var business = request.FirstOrDefault(); // gecici cozum
+        // todo find single generic metodu lazim
+
+        return _mapper.Map<BusinessDTO>(business);
+    }
+
     public async Task<bool> UpdateLastLoginDate(UserDTO user)
     {
         var existingUser = await _userRepo.GetByIdAsync(user.UserId);

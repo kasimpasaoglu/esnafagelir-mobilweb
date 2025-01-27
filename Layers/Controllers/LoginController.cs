@@ -56,7 +56,10 @@ public class LoginController : Controller
         }
         await _loginService.UpdateLastLoginDate(user); // LastLogin tarihi guncellensin TODO Hata olursa ekrana goster???
         var userVM = _mapper.Map<UserVM>(user);
-        HttpContext.Session.SetString("userVm", JsonConvert.SerializeObject(userVM));
+        HttpContext.Session.SetString("userVm", JsonConvert.SerializeObject(userVM)); // user bilgisini sessiona bas
+
+        var businessVm = _mapper.Map<BusinessVM>(await _loginService.FindBusinessById(userVM.BusinessId)); // business bilginisi sorgula
+        HttpContext.Session.SetString("businessVm", JsonConvert.SerializeObject(businessVm)); // business bilgisini sessiona bas
         return RedirectToAction("RequestDetail");
     }
 
@@ -101,7 +104,7 @@ public class LoginController : Controller
         var daysSinceRegister = (DateTime.Now - userVM.RegisterDate).Days;
         var minsSinceRegister = (DateTime.Now - userVM.RegisterDate).TotalMinutes;
 
-        if (minsSinceRegister > 1 || daysSinceRegister % 14 != 0)
+        if (minsSinceRegister > 1 && daysSinceRegister % 14 == 0)
         {
             return RedirectToAction("Index", "Home");
         }
