@@ -1,0 +1,12 @@
+@model CardMainModel
+@{
+    Layout = null; // Layout'u devre dışı bırakır
+}
+
+<a class="bg-appCartBg text-appText p-[0.625rem] flex gap-3 rounded-3xl w-full no-underline">
+    <img class="rounded-2xl" src="@Model.ImgUrl" alt="@Model.Title">
+    <div class="flex flex-col">
+        <h1 class="text-base font-semibold">@Model.Title</h1>
+        <p class="text-sm">@Model.Description</p>
+    </div>
+</a>

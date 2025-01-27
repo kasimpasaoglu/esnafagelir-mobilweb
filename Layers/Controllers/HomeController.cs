@@ -45,13 +45,8 @@ public class HomeController : Controller
         }
         var user = JsonConvert.DeserializeObject<UserVM>(userString);
 
-        #region Carousel cartlari gecici olarak elle dolduruldu
-        List<CardMainModel> cards =
-        [
-            new CardMainModel { Title = "Brand Name" , Description = "Tüm alışverişlerde geçerli özel fırsatlar bu kampanyada", ImgUrl = "/images/home/maincardDemo.png"},
-            new CardMainModel { Title = "Brand Name" , Description = "Tüm alışverişlerde geçerli esnaflara özel fırsatlar bu kampanyada", ImgUrl = "/images/home/maincardDemo.png"},
-            new CardMainModel { Title = "Brand Name" , Description = "Tüm alışverişlerde geçerli özel fırsatlar bu kampanyada", ImgUrl = "/images/home/maincardDemo.png"},
-        ];
+        #region Carousel cartlari gecici olarak elle dolduruldu sadece oncelikli isaretlenenler filtrelendi
+        var cards = CMS.FirsatlarKartlari().Where(x => x.IsPrimary && x.EndDate > DateTime.Now).OrderByDescending(x => x.ReleaseDate).ToList();
         #endregion
 
         var indexVm = new HomeIndexVM()

@@ -1,0 +1,69 @@
+@model OpportunitiesIndexVM
+
+<div class="flex flex-col py-11 px-4 gap-2 mb-14">
+    @* Header *@
+    <div class="text-[1.375rem] font-bold text-appText">
+        <h1>Esnaflara</h1>
+        <h1>Özel Fırsatlar</h1>
+    </div>
+
+    @* Carousel *@
+    <div class="max-w-[100vm] gap-6 flex flex-nowrap overflow-y-scroll scrollbar-hide mb-6">
+        @foreach (var item in Model.PrimaryList)
+        {
+            <partial name="_CardMain" model="item" />
+        }
+    </div>
+
+    @* Main *@
+    <h1 class="text-[1.375rem] font-bold text-appText">Keşfedin</h1>
+    <div id="opportunities-list" class="flex flex-col gap-4 items-center justify-center">
+        @foreach (var item in Model.SecondaryList)
+        {
+            <partial name="_CardSecondary" model="item" />
+        }
+    </div>
+    <a id="load-more" class="text-appSecondary text-sm text-center">Daha fazla göster</a>
+
+
+    @await Html.PartialAsync("_NavbarPartial", "Opportunities")
+</div>
+
+<script>
+    let currentPage = 2;
+
+    document.querySelector("#load-more").addEventListener("click", async function (e) {
+        e.preventDefault();
+        const res = await fetch(`/Opportunities/GetMoreOpportunities?page=${currentPage}`);
+        if (res.status === 200) {
+            const newContent = await res.text();
+
+            // gecici div
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = newContent;
+
+            // Gelen kart sayısını hesapla
+            const newCards = tempDiv.querySelectorAll('a'); // Kartlarınızı seçen bir query
+            console.log(`Yeni eklenen kart sayısı: ${newCards.length}`);
+
+            // Yeni içerikleri listeye ekle
+            document.querySelector('#opportunities-list').innerHTML += newContent;
+
+            // Sayfa numarasını artır
+            currentPage++;
+
+            // Eğer gelen kart sayısı 5'ten azsa, butonu devre dışı bırak
+            if (newCards.length < 5) {
+                const loadMoreButton = document.querySelector('#load-more');
+                loadMoreButton.textContent = "Daha fazla içerik yok"; // Buton metnini değiştir
+                loadMoreButton.style.cursor = "not-allowed"; // Gri bir işaretçi göstermek için
+                loadMoreButton.classList.add("!text-appText"); // Tailwind'de bir `disabled` sınıfı varsa ekleyebilirsiniz
+                loadMoreButton.classList.add("!no-underline"); // Tailwind'de bir `disabled` sınıfı varsa ekleyebilirsiniz
+                loadMoreButton.removeEventListener("click", arguments.callee); // Tıklanabilirliğini kaldır
+            }
+        } else {
+            console.error("Hata");
+        }
+    });
+
+</script>
