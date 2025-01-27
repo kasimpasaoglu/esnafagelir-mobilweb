@@ -42,24 +42,23 @@
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = newContent;
 
-            // Gelen kart sayısını hesapla
-            const newCards = tempDiv.querySelectorAll('a'); // Kartlarınızı seçen bir query
+            // gelen kart sayisini hesapla
+            const newCards = tempDiv.querySelectorAll('a');
             console.log(`Yeni eklenen kart sayısı: ${newCards.length}`);
 
-            // Yeni içerikleri listeye ekle
+            // yeni icerikleri ekle
             document.querySelector('#opportunities-list').innerHTML += newContent;
 
-            // Sayfa numarasını artır
             currentPage++;
 
-            // Eğer gelen kart sayısı 5'ten azsa, butonu devre dışı bırak
+            // 5 ten az kart gelirse buton devre disi
             if (newCards.length < 5) {
                 const loadMoreButton = document.querySelector('#load-more');
-                loadMoreButton.textContent = "Daha fazla içerik yok"; // Buton metnini değiştir
-                loadMoreButton.style.cursor = "not-allowed"; // Gri bir işaretçi göstermek için
-                loadMoreButton.classList.add("!text-appText"); // Tailwind'de bir `disabled` sınıfı varsa ekleyebilirsiniz
-                loadMoreButton.classList.add("!no-underline"); // Tailwind'de bir `disabled` sınıfı varsa ekleyebilirsiniz
-                loadMoreButton.removeEventListener("click", arguments.callee); // Tıklanabilirliğini kaldır
+                loadMoreButton.textContent = "Daha fazla içerik yok";
+                loadMoreButton.style.cursor = "not-allowed";
+                loadMoreButton.classList.add("!text-appText");
+                loadMoreButton.classList.add("!no-underline");
+                loadMoreButton.removeEventListener("click", arguments.callee);
             }
         } else {
             console.error("Hata");
