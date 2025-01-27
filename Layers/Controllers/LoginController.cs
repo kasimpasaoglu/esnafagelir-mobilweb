@@ -36,14 +36,16 @@ public class LoginController : Controller
 
     public async Task<IActionResult> Index([FromQuery] string deviceId)
     {
-        UserDTO user = null;
+        UserDTO user = new UserDTO();
 
         var deviceIdCookie = Request.Cookies["DeviceId"];
 
         if (deviceIdCookie == null)
         {
+            var loginVM = new LoginVM() { DeviceId = deviceId };
+
             // deviceId cookie yoksa yeni kullanici ve ya yeni cihaz. oturum acmali
-            return View(new LoginVM());
+            return View(loginVM);
         }
 
         user = await _loginService.FindByDeviceId(deviceId);
@@ -70,6 +72,7 @@ public class LoginController : Controller
         // COZOM : 
         // Alinan telefon numarasinin kaydini kontrol edip, registered user'sa direk ana sayfaya yonelndirilmeli.
         // SONRA BAKILACAK
+
         var validationResult = _loginValidator.Validate(model);
         if (!validationResult.IsValid)
         {
