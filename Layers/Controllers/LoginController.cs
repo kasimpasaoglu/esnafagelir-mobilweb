@@ -16,7 +16,7 @@ public class LoginController : Controller
     {
         Expires = DateTime.Now.AddDays(90),
         HttpOnly = true,
-        Secure = true,
+        Secure = false,
         SameSite = SameSiteMode.Strict
     };
 
@@ -65,7 +65,11 @@ public class LoginController : Controller
 
     [HttpPost]
     public async Task<IActionResult> Index(LoginVM model)
-    {
+    {   // SORUN! :
+        // kullanici farkli bir cihazdan oturum actiginda yine bu ekrana geliyor, ancak telefon numarasi girdikten sonra yeni bir hesap actiriyor,
+        // COZOM : 
+        // Alinan telefon numarasinin kaydini kontrol edip, registered user'sa direk ana sayfaya yonelndirilmeli.
+        // SONRA BAKILACAK
         var validationResult = _loginValidator.Validate(model);
         if (!validationResult.IsValid)
         {

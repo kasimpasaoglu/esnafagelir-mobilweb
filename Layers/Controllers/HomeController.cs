@@ -21,7 +21,7 @@ public class HomeController : Controller
     {
         Expires = DateTime.Now.AddDays(90),
         HttpOnly = true,
-        Secure = true,
+        Secure = false,
         SameSite = SameSiteMode.Strict
     };
 
