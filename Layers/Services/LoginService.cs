@@ -57,7 +57,7 @@ public class LoginService : ILoginService
             throw new Exception("User not found");
             // DB'de bir sorun yoksa bu asamaya geldiyse kullancinin bulunmasi gereklidir
         }
-        // Update metodu hata verdi??
+
         existingUser.LastLogin = DateTime.Now;
         return await _context.SaveChangesAsync() > 0;
     }

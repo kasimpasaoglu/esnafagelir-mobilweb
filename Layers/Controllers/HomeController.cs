@@ -38,7 +38,7 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        var userString = HttpContext.Session.GetString("userVm");
+        var userString = HttpContext.Session.GetString("UserVM");
         if (string.IsNullOrEmpty(userString))
         {
             return RedirectToAction("Index", "Login");

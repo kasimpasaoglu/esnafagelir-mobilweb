@@ -25,21 +25,54 @@ public class RegisterService : IRegisterService
 
     }
     public async Task<UserDTO> SignInWithPhoneNumber(UserDTO model)
-    {   // duruma gore kayit ve ya guncelleme islemi yapar, basariliysa islenen modeli doner, basarisizsa null
+    {
+        // tek sorguda hem deviceId ve ya PhoneNmber eslesen kullaniciyi getir 
+        var matchingUsers = await _userRepo.FindAsync(u =>
+            u.PhoneNumber == model.PhoneNumber || u.DeviceId == model.DeviceId);
 
-        // TODO: 
-        /// Gelen modeldeki phoneNumber ve deviceId degerlerini veritabainda sorgula
-        /// Eger veritabaninda eslesme yoksa yeni kullanici kaydi olustur,
-        /// Eslesme varsa var olan kullanicinin bilgileirni guncelle
-        model.LastLogin = DateTime.Now;
-        model.RegisterDate = DateTime.Now;
+        // hic bisey bulmazsa yeni kullanici olusturup kaydet
+        if (!matchingUsers.Any())
+        {
+            var newUser = _mapper.Map<User>(model);
 
-        var user = _mapper.Map<User>(model);
+            newUser.LastLogin = DateTime.Now;
+            newUser.RegisterDate = DateTime.Now;
 
-        await _userRepo.AddAsync(user);
-        var result = await _context.SaveChangesAsync();
-        return result > 0 ? _mapper.Map<UserDTO>(user) : null; //basariliysa modeli don degilse null
+            await _userRepo.AddAsync(newUser);
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<UserDTO>(newUser);
+        }
+
+        // kullanici bulunduysa guncelleme islemi yapilacak. hangi field eslesiyorsa o kullaniciyi yakala
+        var userToUpdate = matchingUsers.FirstOrDefault(u => u.PhoneNumber == model.PhoneNumber)
+            ?? matchingUsers.FirstOrDefault(u => u.DeviceId == model.DeviceId); // ya device id eslesecek ya da phoneNumber
+
+        if (userToUpdate != null)
+        {
+            // phone number eslesiyorsa device id degistir
+            if (userToUpdate.PhoneNumber == model.PhoneNumber)
+            {
+                userToUpdate.DeviceId = model.DeviceId;
+            }
+            // deviceid eslesiyorsa phoneNumber'i degistir
+            else if (userToUpdate.DeviceId == model.DeviceId)
+            {
+                userToUpdate.PhoneNumber = model.PhoneNumber;
+            }
+
+            userToUpdate.LastLogin = DateTime.Now;
+
+            _userRepo.Update(userToUpdate);
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<UserDTO>(userToUpdate);
+        }
+
+        return null; // beklenmeyen durumda null don
     }
+
+
 
 
     public async Task<bool> RegisterUserWithBusiness(UserDTO user, BusinessDTO business)

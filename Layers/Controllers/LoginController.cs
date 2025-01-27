@@ -12,13 +12,13 @@ public class LoginController : Controller
     private readonly IRegisterService _registerService;
     private readonly IValidator<LoginVM> _loginValidator;
     private readonly IMapper _mapper;
-    private CookieOptions CookieOptions { get; set; } = new CookieOptions
-    {
-        Expires = DateTime.Now.AddDays(90),
-        HttpOnly = true,
-        Secure = false,
-        SameSite = SameSiteMode.Strict
-    };
+    // private CookieOptions CookieOptions { get; set; } = new CookieOptions
+    // {
+    //     Expires = DateTime.Now.AddDays(90),
+    //     HttpOnly = true,
+    //     Secure = false,
+    //     SameSite = SameSiteMode.Strict
+    // };
 
     public LoginController
     (
@@ -36,42 +36,37 @@ public class LoginController : Controller
 
     public async Task<IActionResult> Index([FromQuery] string deviceId)
     {
-        UserDTO user = new UserDTO();
-
-        var deviceIdCookie = Request.Cookies["DeviceId"];
-
-        if (deviceIdCookie == null)
+        if (deviceId == null)
         {
-            var loginVM = new LoginVM() { DeviceId = deviceId };
-
-            // deviceId cookie yoksa yeni kullanici ve ya yeni cihaz. oturum acmali
-            return View(loginVM);
+            return NotFound(); // device id yoksa girisi engelle
         }
 
-        user = await _loginService.FindByDeviceId(deviceId);
+        var user = await _loginService.FindByDeviceId(deviceId); // user'i bulmaya calis
 
-        var phoneNumberCookie = Request.Cookies["PhoneNumber"];
-
-        if (phoneNumberCookie == null || user?.PhoneNumber != phoneNumberCookie)
+        if (user == null)
         {
-            return View(new LoginVM()); // telefon numarasi cookie bulunamadi ve ya numara ile eslesmedi giris yap!
+            HttpContext.Session.SetString("DeviceID", deviceId);
+            return View(); // giris yapma ekraninda kal
         }
-        await _loginService.UpdateLastLoginDate(user); // LastLogin tarihi guncellensin TODO Hata olursa ekrana goster???
+
+        // device id'den useri bulduysak...
         var userVM = _mapper.Map<UserVM>(user);
-        HttpContext.Session.SetString("userVm", JsonConvert.SerializeObject(userVM)); // user bilgisini sessiona bas
-
+        await _loginService.UpdateLastLoginDate(user); // LastLogin tarihi guncellensin TODO: Hata olursa ekrana goster???
         var businessVm = _mapper.Map<BusinessVM>(await _loginService.FindBusinessById(userVM.BusinessId)); // business bilginisi sorgula
-        HttpContext.Session.SetString("businessVm", JsonConvert.SerializeObject(businessVm)); // business bilgisini sessiona bas
+
+        HttpContext.Session.SetString("UserVM", JsonConvert.SerializeObject(userVM)); //  user bilgisini sessiona at
+        HttpContext.Session.SetString("BusinessVM", JsonConvert.SerializeObject(businessVm)); // business bilgisini sessiona bas
+
         return RedirectToAction("RequestDetail");
     }
 
     [HttpPost]
     public async Task<IActionResult> Index(LoginVM model)
-    {   // SORUN! :
-        // kullanici farkli bir cihazdan oturum actiginda yine bu ekrana geliyor, ancak telefon numarasi girdikten sonra yeni bir hesap actiriyor,
-        // COZOM : 
-        // Alinan telefon numarasinin kaydini kontrol edip, registered user'sa direk ana sayfaya yonelndirilmeli.
-        // SONRA BAKILACAK
+    {   // kullanici bu formu gonderiyorsa iki ihtimal var
+        // ya ilk kez giris yapiyor
+        // ya da device id degismis
+
+        var deviceId = HttpContext.Session.GetString("DeviceID");
 
         var validationResult = _loginValidator.Validate(model);
         if (!validationResult.IsValid)
@@ -79,20 +74,28 @@ public class LoginController : Controller
             return View(model); // validasyon basarisiz
         }
 
-        // kullanici kimligi olusturma 
-        var user = _mapper.Map<UserVM>(model);
-        var registeredUserDTO = await _registerService.SignInWithPhoneNumber(_mapper.Map<UserDTO>(user)); // kayit denemesi...
-        if (registeredUserDTO != null)
+        var user = new UserVM
         {
-            var registeredUserVM = _mapper.Map<UserVM>(registeredUserDTO);
-            // kayit basarili cookielere detaylari koy
-            Response.Cookies.Append("PhoneNumber", registeredUserVM.PhoneNumber, CookieOptions);
-            Response.Cookies.Append("DeviceId", registeredUserVM.DeviceId.ToString(), CookieOptions);
-            HttpContext.Session.SetString("userVm", JsonConvert.SerializeObject(registeredUserVM));
-            return RedirectToAction("RequestDetail");
+            DeviceId = deviceId,
+            PhoneNumber = model.PhoneNumber,
+        };
+
+        // kayit islemini iki durum icinde service katmaninda cozecek
+        var registeredUserDTO = await _registerService.SignInWithPhoneNumber(_mapper.Map<UserDTO>(user));
+        if (registeredUserDTO == null)
+        {
+            ModelState.AddModelError(string.Empty, "Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyiniz."); // TODO bunu ekranda goster
+            return View(model);
         }
-        ModelState.AddModelError(string.Empty, "Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyiniz."); // TODO bunu ekranda goster
-        return View(model); // giris basarisiz,
+
+        var registeredUserVM = _mapper.Map<UserVM>(registeredUserDTO);
+        var businessVm = _mapper.Map<BusinessVM>(await _loginService.FindBusinessById(registeredUserVM.BusinessId)); // business bilginisi sorgula
+
+        HttpContext.Session.SetString("UserVM", JsonConvert.SerializeObject(registeredUserVM)); //  user bilgisini sessiona at
+        HttpContext.Session.SetString("BusinessVM", JsonConvert.SerializeObject(businessVm)); // business bilgisini sessiona bas
+        HttpContext.Session.Remove("DeviceID");
+        return RedirectToAction("RequestDetail");
+
     }
     public IActionResult LegalNotice()
     {
@@ -101,7 +104,7 @@ public class LoginController : Controller
 
     public IActionResult RequestDetail()
     {
-        var userVmJson = HttpContext.Session.GetString("userVm"); // sessiondan kullanci bilgilerini al
+        var userVmJson = HttpContext.Session.GetString("UserVM"); // sessiondan kullanci bilgilerini al
         if (string.IsNullOrEmpty(userVmJson))
         {
             return RedirectToAction("Index");
