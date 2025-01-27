@@ -24,7 +24,7 @@ public class LoginService : ILoginService
         _mapper = mapper;
     }
 
-    public async Task<UserDTO> FindByDeviceId(Guid deviceId)
+    public async Task<UserDTO> FindByDeviceId(string deviceId)
     {
         var request = await _userRepo.FindAsync(x => x.DeviceId == deviceId);
         var user = request.FirstOrDefault(); // gecici cozum!!!

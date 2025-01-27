@@ -31,7 +31,6 @@ public class RegisterService : IRegisterService
         /// Gelen modeldeki phoneNumber ve deviceId degerlerini veritabainda sorgula
         /// Eger veritabaninda eslesme yoksa yeni kullanici kaydi olustur,
         /// Eslesme varsa var olan kullanicinin bilgileirni guncelle
-        model.DeviceId = Guid.NewGuid();
         model.LastLogin = DateTime.Now;
         model.RegisterDate = DateTime.Now;
 

@@ -34,7 +34,7 @@ public class LoginController : Controller
         _mapper = mapper;
     }
 
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index([FromQuery] string deviceId)
     {
         UserDTO user = null;
 
@@ -46,7 +46,7 @@ public class LoginController : Controller
             return View(new LoginVM());
         }
 
-        user = await _loginService.FindByDeviceId(Guid.Parse(deviceIdCookie));
+        user = await _loginService.FindByDeviceId(deviceId);
 
         var phoneNumberCookie = Request.Cookies["PhoneNumber"];
 

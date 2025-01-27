@@ -7,7 +7,7 @@ public partial class User
 {
     public int UserId { get; set; }
 
-    public Guid DeviceId { get; set; }
+    public string DeviceId { get; set; }
 
     public DateTime LastLogin { get; set; }
 
