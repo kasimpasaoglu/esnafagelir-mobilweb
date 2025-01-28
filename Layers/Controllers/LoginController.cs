@@ -78,6 +78,7 @@ public class LoginController : Controller
         {
             DeviceId = deviceId,
             PhoneNumber = model.PhoneNumber,
+            IsPrivacyPolicyAccepted = model.IsPrivacyPolicyAccepted,
         };
 
         // kayit islemini iki durum icinde service katmaninda cozecek

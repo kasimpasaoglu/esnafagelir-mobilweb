@@ -1,0 +1,28 @@
+@model ContactFormVM
+
+@{
+    ViewData["Title"] = "Bize Yazın";
+}
+@await Html.PartialAsync("_HeaderPartial", new HeaderModel
+{
+    Text = "Bize Yazın",
+    ArrowLink = "/Home/Index",
+})
+
+<div class="flex flex-col py-11 px-4 gap-[2.375rem] mb-14 min-h-[calc(100vh-5rem)]">
+    <h1 class="font-bold text-[1.375rem]">Bize Yazın</h1>
+    <form class="flex flex-col flex-1 justify-between" action="/ContactUs/Index" method="post">
+        <!-- Form Alanı -->
+        <div class="flex flex-col gap-3">
+            <label asp-for="Message" class="text-appStroke text-xs font-inter font-normal">Notunuz</label>
+            <textarea placeholder="Bizimle paylaşmak istediğiniz soru, yorum ve önerileri yazınız."
+                class="min-h-24 border-b-[1px] pb-1 text-base border-appStroke focus:outline-none focus:border-appPrimary w-full bg-appBgMain"
+                asp-for="Message"></textarea>
+            <span class="text-appWarning text-sm" asp-validation-for="Message"></span>
+        </div>
+        <!-- Buton -->
+        <div class="mt-auto mx-auto">
+            @await Html.PartialAsync("_ButtonPartial", new ButtonModel { Text = "Gönder", IsSubmit = true, })
+        </div>
+    </form>
+</div>
