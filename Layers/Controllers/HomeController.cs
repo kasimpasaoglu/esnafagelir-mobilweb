@@ -125,7 +125,7 @@ public class HomeController : Controller
             model.BusinessTypes = _businessTypesList;
             return View(model);
         }
-
+        #region  Validasyon basariliysa formdan gelen model icindeki degerleri, sessiondan alinan user ve business modellerinin icine yerlestir
         user.Name = model.User.Name;
         user.Surname = model.User.Surname;
         user.PhoneNumber = model.User.PhoneNumber;
@@ -133,22 +133,29 @@ public class HomeController : Controller
         business.BusinessName = model.Business.BusinessName;
         business.BusinessTypeId = model.SelectedBusinessTypeId;
         business.Address = model.Business.Address;
+        #endregion
 
         var userDTO = _mapper.Map<UserDTO>(user);
         var businessDto = _mapper.Map<BusinessDTO>(business);
-        var result = await _updateService.UpdateUserAndBussines(userDTO, businessDto);
-        if (result > 0)
+        var businessId = await _updateService.UpdateUserAndBussines(userDTO, businessDto); // guncelleme basariliysa businessId 0 dan buyuk donmeli?
+
+        if (businessId > 0)
         {
-            model.IsUpdatedSuccesfully = true;
+            user.BusinessId = businessId; // gelen business id user ve business'a eklenir
+            business.BusinessId = businessId;
+            model.IsUpdatedSuccesfully = true; //ekranda guncelleme basarili metni gelmesi icin
+            model.IsEditMode = false; //editmode kapali
         }
 
 
-        model.IsEditMode = false;
+        #region son halini modele koy
         model.User = user;
         model.Business = business;
         model.Roles = _rolesList;
         model.BusinessTypes = _businessTypesList;
+        #endregion
 
+        // Guncellenmis halini sessiona geri koy
         HttpContext.Session.SetString("UserVM", JsonConvert.SerializeObject(user));
         HttpContext.Session.SetString("BusinessVM", JsonConvert.SerializeObject(business));
 

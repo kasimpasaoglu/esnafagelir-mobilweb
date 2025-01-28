@@ -11,3 +11,6 @@ DBCC CHECKIDENT ('Businesses', RESEED, 0);
 
 ALTER TABLE Users ALTER COLUMN DeviceId NVARCHAR(36);
 
+UPDATE Businesses
+SET BusinessName = '', Address = ''
+WHERE BusinessId = 0

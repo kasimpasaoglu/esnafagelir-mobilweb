@@ -11,8 +11,8 @@
                 var hour = DateTime.Now.Hour;
                 string greetingMessage = hour switch
                 {
-                    >= 6 and < 12 => "Günaydın,",
-                    >= 12 and < 18 => "İyi Günler,",
+                    >= 6 and < 11 => "Günaydın,",
+                    >= 11 and < 18 => "İyi Günler,",
                     >= 18 and < 22 => "İyi Akşamlar,",
                     _ => "İyi Geceler,"
                 };

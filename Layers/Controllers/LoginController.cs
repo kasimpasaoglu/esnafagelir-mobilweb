@@ -81,7 +81,7 @@ public class LoginController : Controller
         };
 
         // kayit islemini iki durum icinde service katmaninda cozecek
-        var registeredUserDTO = await _registerService.SignInWithPhoneNumber(_mapper.Map<UserDTO>(user));
+        var registeredUserDTO = await _registerService.SignInWithPhoneNumber(_mapper.Map<UserDTO>(user)); // kayit isleminden sonra gelen modelde userId bilgisi oldugu icin sessiona bu model basilacak
         if (registeredUserDTO == null)
         {
             ModelState.AddModelError(string.Empty, "Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyiniz."); // TODO bunu ekranda goster

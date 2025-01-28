@@ -111,14 +111,18 @@ public class RegisterController : Controller
 
         var businessToRegister = _mapper.Map<BusinessDTO>(model.Business);
         var userToRegister = _mapper.Map<UserDTO>(model.User);
-        var result = await _registerService.RegisterUserWithBusiness(userToRegister, businessToRegister);
-        if (!result)
+        var registeredBusinessId = await _registerService.RegisterUserWithBusiness(userToRegister, businessToRegister); // user ve business registration islemi yapildiktan sonra businessId'yi almamiz lazim. O yuzden bu metod businessId'yi donmeli
+        if (registeredBusinessId == 0)
         {
             ModelState.AddModelError(string.Empty, "Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyiniz.");
             return View(model);
         }
-        HttpContext.Session.SetString("UserVM", JsonConvert.SerializeObject(model.User));
-        HttpContext.Session.SetString("BusinessVM", JsonConvert.SerializeObject(model.Business));
+
+        // gelen business id her iki entity'e eklenip sessiona atiliyor
+        userToRegister.BusinessId = registeredBusinessId;
+        businessToRegister.BusinessId = registeredBusinessId;
+        HttpContext.Session.SetString("UserVM", JsonConvert.SerializeObject(userToRegister));
+        HttpContext.Session.SetString("BusinessVM", JsonConvert.SerializeObject(businessToRegister));
         return RedirectToAction("Index", "Home");
     }
 

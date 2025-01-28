@@ -73,9 +73,7 @@ public class RegisterService : IRegisterService
     }
 
 
-
-
-    public async Task<bool> RegisterUserWithBusiness(UserDTO user, BusinessDTO business)
+    public async Task<int> RegisterUserWithBusiness(UserDTO user, BusinessDTO business)
     {   // user ve bussines bilgilerini alip iki ayri tabloda islem yapar
         // once business tablosuna kaydi gonderir, aldigi businessId'yi user modelinin icine koyup, user modelinin kaydini gunceller(cunku ilk kayit zaten telefon numarasi ile yapilmisti)
 
@@ -90,7 +88,11 @@ public class RegisterService : IRegisterService
         var userDMO = _mapper.Map<User>(user);
         _userRepo.Update(userDMO);
         result += await _context.SaveChangesAsync();
-        return result > 0 ? true : false;
+        if (result > 0)
+        {
+            return bussinesDMO.BusinessId;
+        }
+        return 0;
         // NOT: unitofwork transaction yonetimi lazim gibi. yoksa db'de tutarsizliklar olusabilir...
 
     }

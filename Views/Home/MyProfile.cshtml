@@ -36,19 +36,23 @@
         </div>
 
         <div class="col-span-3">
-            <div class="flex items-center gap-2 mt-4">
+            <div class="flex items-center gap-2 mt-4 relative">
                 <div class="flex flex-col gap-5">
                     <p class="text-sm text-appSecondary">Esnafa Gelir üzerinden dükkanıma gelecek iş birlikleriyle
                         ilgili bilgilendirmelere açığım</p>
                 </div>
                 <label class="relative inline-flex items-center">
                     <input id="allowsCoop" type="checkbox" asp-for="Business.AllowsCooperation" class="sr-only peer">
-                    <div class="w-[3.20rem] h-8 bg-gray-200 rounded-full peer peer-checked:bg-green-600">
+                    <div class="w-[3.20rem] h-8 bg-gray-200 rounded-full peer peer-checked:bg-appSecondary">
                     </div>
                     <div
                         class="absolute top-1 left-1 bg-white border border-gray-300 rounded-full h-6 w-6 peer-checked:translate-x-[calc(100%-0.30rem)] transition-transform">
                     </div>
                 </label>
+                <div id="coop-warning" class="bg-appBgMain absolute top-0 left-0 duration-500 opacity-0 -z-10">
+                    <p class="text-appWarning text-sm p-4">İşletmenizi işbirliklerine açmak için lütfen önce işletme
+                        kaydınızı tamamlayınız.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -150,35 +154,57 @@
 </div>
 
 <script>
-
     // Debounce fonksiyonu: Bir süre boyunca başka çağrı gelmezse işlemi gerçekleştirir
     function debounce(func, delay) {
-        let timer
+        let timer;
         return function (...args) {
-            clearTimeout(timer)
-            timer = setTimeout(() => func.apply(this, args), delay)
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(this, args), delay);
         };
     }
 
-    // Event listener için debounce eklenmiş fonksiyon
-    const handleChange = debounce(async function (e) {
-        const id = @Model.Business.BusinessId
-        const allows = e.target.checked
-
-        console.log("BusinessId:", id)
-        console.log("AllowsCoop:", allows)
-
-        const response = await fetch(`/Home/UpdateAllowsCoop?businessId=${id}&allowsCoop=${allows}`, {
-            method: 'POST',
-        });
-
-        if (response.ok) {
-            console.log("Güncellendi")
-        } else {
-            console.log("Güncellenmedi")
-        }
-    }, 1000) // 1 saniye bekleme süresi
-
     // Checkbox değişikliklerini dinle
-    document.querySelector("#allowsCoop").addEventListener("change", handleChange)
+    document.querySelector("#allowsCoop").addEventListener("change", function (e) {
+        const id = @Model.Business.BusinessId;
+        const allows = e.target.checked;
+
+        const coopWarning = document.querySelector("#coop-warning")
+        // ID kontrolü
+        if (id === 0) {
+            coopWarning.classList.remove('-z-10')
+            coopWarning.classList.add('z-10')
+            coopWarning.classList.remove('opacity-0')
+            coopWarning.classList.add('opacity-100')
+
+            //todo 3 saniye bekle
+            setTimeout(() => {
+                // classlari eski haline getir
+                coopWarning.classList.remove('z-10');
+                coopWarning.classList.add('-z-10');
+                coopWarning.classList.remove('opacity-100');
+                coopWarning.classList.add('opacity-0');
+            }, 2000);
+
+            // checkboxu eski haline dondur
+            e.target.checked = false;
+            return; // İşlem devam etmesin
+        }
+
+        // ID geçerli ise sorgu işlemini debounce ile gerçekleştirin
+        debounce(async function () {
+            console.log("BusinessId:", id);
+            console.log("AllowsCoop:", allows);
+
+            const response = await fetch(`/Home/UpdateAllowsCoop?businessId=${id}&allowsCoop=${allows}`, {
+                method: 'POST',
+            });
+
+            if (response.ok) {
+                console.log("Güncellendi");
+            } else {
+                console.log("Güncellenmedi");
+            }
+        }, 1000)(); // 1 saniye debounce süresi
+    });
+
 </script>
