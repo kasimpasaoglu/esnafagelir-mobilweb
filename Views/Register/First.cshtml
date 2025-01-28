@@ -10,13 +10,13 @@
         <div class="w-full flex flex-col gap-2">
             <div>
                 <label asp-for="User.Name" class="text-appStroke text-xs font-inter font-normal">Ad</label>
-                <input class="border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
+                <input class="bg-appBgMain border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
                     asp-for="User.Name" type="text" placeholder="Erdoğan Orhun">
                 <span class="text-appWarning text-sm" asp-validation-for="User.Name"></span>
             </div>
             <div>
                 <label asp-for="User.Surname" class="text-appStroke text-xs font-inter font-normal">Soyad</label>
-                <input class="border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
+                <input class="bg-appBgMain border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
                     asp-for="User.Surname" type="text" placeholder="Özbalkan">
                 <span class="text-appWarning text-sm" asp-validation-for="User.Surname"></span>
             </div>
