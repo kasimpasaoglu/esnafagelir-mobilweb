@@ -93,7 +93,7 @@ public class LoginController : Controller
 
         HttpContext.Session.SetString("UserVM", JsonConvert.SerializeObject(registeredUserVM)); //  user bilgisini sessiona at
         HttpContext.Session.SetString("BusinessVM", JsonConvert.SerializeObject(businessVm)); // business bilgisini sessiona bas
-        HttpContext.Session.Remove("DeviceID");
+        HttpContext.Session.Remove("DeviceID"); // device id'yi sil
         return RedirectToAction("RequestDetail");
 
     }

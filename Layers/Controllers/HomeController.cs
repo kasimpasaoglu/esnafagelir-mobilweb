@@ -61,7 +61,7 @@ public class HomeController : Controller
 
     public IActionResult MyProfile()
     {
-        var userString = HttpContext.Session.GetString("userVm");
+        var userString = HttpContext.Session.GetString("UserVM");
         if (string.IsNullOrEmpty(userString))
         {
             return RedirectToAction("Index", "Login");
@@ -69,7 +69,7 @@ public class HomeController : Controller
 
         var user = JsonConvert.DeserializeObject<UserVM>(userString); // user
 
-        var businessString = HttpContext.Session.GetString("businessVm");
+        var businessString = HttpContext.Session.GetString("BusinessVM");
         if (string.IsNullOrEmpty(businessString))
         {
             return RedirectToAction("Index", "Login");
@@ -89,7 +89,7 @@ public class HomeController : Controller
     [HttpPost]
     public async Task<IActionResult> MyProfile(MyProfileVM model)
     {
-        var userString = HttpContext.Session.GetString("userVm");
+        var userString = HttpContext.Session.GetString("UserVM");
         if (string.IsNullOrEmpty(userString))
         {
             return RedirectToAction("Index", "Login");
@@ -97,7 +97,7 @@ public class HomeController : Controller
 
         var user = JsonConvert.DeserializeObject<UserVM>(userString); // user
 
-        var businessString = HttpContext.Session.GetString("businessVm");
+        var businessString = HttpContext.Session.GetString("BusinessVM");
         if (string.IsNullOrEmpty(businessString))
         {
             return RedirectToAction("Index", "Login");
@@ -149,10 +149,8 @@ public class HomeController : Controller
         model.Roles = _rolesList;
         model.BusinessTypes = _businessTypesList;
 
-        HttpContext.Session.SetString("userVm", JsonConvert.SerializeObject(user));
-        HttpContext.Session.SetString("businessVm", JsonConvert.SerializeObject(business));
-        Response.Cookies.Append("PhoneNumber", user.PhoneNumber, CookieOptions);
-        Response.Cookies.Append("DeviceId", user.DeviceId.ToString(), CookieOptions);
+        HttpContext.Session.SetString("UserVM", JsonConvert.SerializeObject(user));
+        HttpContext.Session.SetString("BusinessVM", JsonConvert.SerializeObject(business));
 
         return View(model);
     }
@@ -171,9 +169,10 @@ public class HomeController : Controller
         var result = await _updateService.UpdateCoopDecision(businessId, allowsCoop);
         if (result > 0)
         {
-            var bussinesVm = JsonConvert.DeserializeObject<BusinessVM>(HttpContext.Session.GetString("businessVm"));
+            var bussinesVm = JsonConvert.DeserializeObject<BusinessVM>(HttpContext.Session.GetString("BusinessVM"));
             bussinesVm.AllowsCooperation = allowsCoop;
-            HttpContext.Session.SetString("businessVm", JsonConvert.SerializeObject(bussinesVm));
+            await _updateService.UpdateCoopDecision(bussinesVm.BusinessId, bussinesVm.AllowsCooperation);
+            HttpContext.Session.SetString("BusinessVM", JsonConvert.SerializeObject(bussinesVm));
             return Ok();
         }
         else return BadRequest("Güncelleme sırasında bir hata oluştu.");

@@ -31,6 +31,8 @@ public class RegisterController : Controller
         _secondStepValidator = secondStepValidator;
         _mapper = mapper;
 
+
+        // selector listeleri
         _rolesList = _mapper.Map<List<RoleVM>>(_selectorsService.GetRolesList().Result.ToList());
         _businessTypesList = _mapper.Map<List<BusinessTypeVM>>(_selectorsService.GetBusinessTypesList().Result.ToList());
         _cityList = _mapper.Map<List<CityVM>>(_selectorsService.GetCitiesList().Result.ToList());
@@ -38,8 +40,8 @@ public class RegisterController : Controller
     }
     public IActionResult First()
     {
-        var sessionModel = HttpContext.Session.GetString("userVm");
-        if (string.IsNullOrEmpty(sessionModel)) return RedirectToAction("Index", "Login");
+        var sessionModel = HttpContext.Session.GetString("UserVM");
+        if (string.IsNullOrEmpty(sessionModel)) return RedirectToAction("Index", "Login"); // sessionda kullanici yoksa login sayfasina geri gonder
         var user = JsonConvert.DeserializeObject<UserVM>(sessionModel);
 
         var model = new RegisterFirstVM
@@ -61,49 +63,52 @@ public class RegisterController : Controller
             return View(model);
         }
 
-        // validasyondan gecerse
-        var sessionModel = HttpContext.Session.GetString("userVm"); // sessiondaki modeli cek
+        var sessionModel = HttpContext.Session.GetString("UserVM"); // sessiondaki modeli cek
         if (string.IsNullOrEmpty(sessionModel)) return RedirectToAction("Index", "Login"); // bu noktada sessionda model yoksa biseyler cok yanlis gidiyor demektir 
-        var sessionUser = JsonConvert.DeserializeObject<UserVM>(sessionModel); // deserialize islemi
+        var sessionUser = JsonConvert.DeserializeObject<UserVM>(sessionModel);
         // yeni eklenen bilgileri modele ekle
         sessionUser.Name = model.User.Name;
         sessionUser.Surname = model.User.Surname;
         sessionUser.RoleId = model.SelectedRoleId;
         // modeli tekrar sessiona gonder
-        HttpContext.Session.SetString("userVm", JsonConvert.SerializeObject(sessionUser));
+        HttpContext.Session.SetString("UserVM", JsonConvert.SerializeObject(sessionUser));
         return RedirectToAction("Second"); // bir sonraki adima gec
     }
 
     public async Task<IActionResult> Second()
     {
-        var stringModel = HttpContext.Session.GetString("userVm");
+        var stringModel = HttpContext.Session.GetString("UserVM");
         var user = JsonConvert.DeserializeObject<UserVM>(stringModel);
-        var model = new RegisterSecondVM();
-        model.User = user;
-        model.BusinessTypes = _businessTypesList;
-        model.Cities = _cityList;
-        model.Districts = new List<DistrictVM>();//bos liste gidecek, listeyi on tarafda JS ile olustur
+
+        var model = new RegisterSecondVM()
+        {
+            User = user,
+            BusinessTypes = _businessTypesList,
+            Cities = _cityList,
+            Districts = new List<DistrictVM>(),//bos liste gidecek, listeyi on tarafda JS ile olusturuor
+        };
         return View(model);
     }
 
     [HttpPost]
     public async Task<IActionResult> Second(RegisterSecondVM model)
     {
-        var stringModel = HttpContext.Session.GetString("userVm");
+        var stringModel = HttpContext.Session.GetString("UserVM");
         var user = JsonConvert.DeserializeObject<UserVM>(stringModel);
         model.User = user;
-        model.BusinessTypes = _businessTypesList;
-        model.Cities = _cityList;
-        model.Districts = new List<DistrictVM>();
 
         var validationResult = _secondStepValidator.Validate(model);
         if (!validationResult.IsValid)
         {
-            // todo
+            model.BusinessTypes = _businessTypesList;
+            model.Cities = _cityList;
+            model.Districts = new List<DistrictVM>();
             return View(model);
         }
+
         model.Business.BusinessTypeId = model.SelectedBusinessTypeId;
         model.Business.DistrictId = model.SelectedDisrictId;
+
         var businessToRegister = _mapper.Map<BusinessDTO>(model.Business);
         var userToRegister = _mapper.Map<UserDTO>(model.User);
         var result = await _registerService.RegisterUserWithBusiness(userToRegister, businessToRegister);
@@ -112,8 +117,8 @@ public class RegisterController : Controller
             ModelState.AddModelError(string.Empty, "Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyiniz.");
             return View(model);
         }
-        HttpContext.Session.SetString("userVm", JsonConvert.SerializeObject(model.User));
-        HttpContext.Session.SetString("bussinesVm", JsonConvert.SerializeObject(model.Business));
+        HttpContext.Session.SetString("UserVM", JsonConvert.SerializeObject(model.User));
+        HttpContext.Session.SetString("BusinessVM", JsonConvert.SerializeObject(model.Business));
         return RedirectToAction("Index", "Home");
     }
 
