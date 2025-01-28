@@ -111,10 +111,14 @@ public class LoginController : Controller
         }
 
         var userVM = JsonConvert.DeserializeObject<UserVM>(userVmJson);
-        var daysSinceRegister = (DateTime.Now - userVM.RegisterDate).Days;
+        var daysSinceRegister = (DateTime.Now - userVM.RegisterDate).TotalDays;
         var minsSinceRegister = (DateTime.Now - userVM.RegisterDate).TotalMinutes;
 
-        if (minsSinceRegister > 1 && daysSinceRegister % 14 == 0)
+        /// bu kontrolde sorun var, 
+        /// gun farkini TotalDays olarak almazsam 0-14-28... gunlderde sgun boyu her loginde ekrani goruyor
+        /// totaldays olarak alirsam, kullanicinin tam olarak kayit oldugu saat ve dakikada 14 gunde bir, bir kere ekrani goruyor.
+        /// daha dogru bir cozum lazim
+        if (minsSinceRegister > 1 && daysSinceRegister % 14 != 0)
         {
             return RedirectToAction("Index", "Home");
         }
