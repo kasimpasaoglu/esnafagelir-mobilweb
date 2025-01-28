@@ -17,4 +17,15 @@ public class ExpertController : Controller
 
         return View(_mapper.Map<List<ExpertCategoryVM>>(dtoModel));
     }
+
+    public IActionResult Form(int CategoryId)
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult Form()
+    {
+        return View();
+    }
 }
