@@ -4,6 +4,7 @@ public interface IOpportunitiesService
 {
     Task<List<OpportunityDTO>> GetPrimaryOpportunitiesAsync();
     Task<List<OpportunityDTO>> GetSecondaryOpportunitiesAsync();
+    Task<List<OpportunityDTO>> GetAllOpportunitiesAsync();
     Task<OpportunityDTO> GetOpportunityAsync(int opportunityId);
     Task<int> AddOpportunityAsync(OpportunityDTO model);
     Task RemoveOpportunityByIdsAsync(List<int> opportunityIds);

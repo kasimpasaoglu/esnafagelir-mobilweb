@@ -45,8 +45,10 @@ public class OpportunitiesController : Controller
             return NoContent();
         }
 
+        var itemsVM = _mapper.Map<List<OpportunityVM>>(items);
+
         var renderedHtml = string.Join("", await Task.WhenAll(
-            items.Select(async item => await RazorTemplateEngine.RenderAsync("_CardSecondary", item))
+            itemsVM.Select(async item => await RazorTemplateEngine.RenderAsync("_CardSecondary", item))
         ));
 
         return Content(renderedHtml, "text/html");

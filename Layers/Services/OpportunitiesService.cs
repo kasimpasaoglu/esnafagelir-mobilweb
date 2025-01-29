@@ -24,15 +24,19 @@ public class OpportunitiesService : IOpportunitiesService
         return _mapper.Map<OpportunityDTO>(dmoModel);
     }
 
+    public async Task<List<OpportunityDTO>> GetAllOpportunitiesAsync()
+    {
+        return _mapper.Map<List<OpportunityDTO>>(await _opportunityRepo.GetAllAsync());
+    }
     public async Task<List<OpportunityDTO>> GetPrimaryOpportunitiesAsync()
     {
-        var dmoModel = await _opportunityRepo.FindAsync(x => x.IsPrimary && x.EndDate > DateTime.Now);
+        var dmoModel = await _opportunityRepo.FindAsync(x => x.IsPrimary && x.EndDate > DateTime.Now.AddHours(2));
         return _mapper.Map<List<OpportunityDTO>>(dmoModel);
     }
 
     public async Task<List<OpportunityDTO>> GetSecondaryOpportunitiesAsync()
     {
-        var dmoModel = await _opportunityRepo.FindAsync(x => !x.IsPrimary && x.EndDate > DateTime.Now);
+        var dmoModel = await _opportunityRepo.FindAsync(x => !x.IsPrimary && x.EndDate > DateTime.Now.AddHours(2));
         return _mapper.Map<List<OpportunityDTO>>(dmoModel);
     }
 

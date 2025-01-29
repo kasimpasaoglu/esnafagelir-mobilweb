@@ -102,7 +102,6 @@ namespace YourNamespace.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveExpert(ExpertCategoryAdminPage model)
         {
-
             if (model.SelectedCategoryIds == null)
             {
                 var dtoList = await _expertService.GetExpertCategoriesAsync();
@@ -179,14 +178,43 @@ namespace YourNamespace.Controllers
         }
 
 
-        public IActionResult RemoveOpportunity()
+        public async Task<IActionResult> RemoveOpportunity()
         {
-            return View();
+            List<OpportunityVM> allOpportunities = _mapper.Map<List<OpportunityVM>>(await _opportunitiesService.GetAllOpportunitiesAsync());
+
+            return View(new OpportunitiesAdminPage
+            {
+                ExistingOpportunities = allOpportunities,
+            });
         }
+
         [HttpPost]
-        public IActionResult RemoveOpportunity(int gecici)
+        public async Task<IActionResult> RemoveOpportunity(OpportunitiesAdminPage model)
         {
-            return View();
+            if (model.SelectedOpportunityIds == null)
+            {
+                List<OpportunityVM> allOpportunities = _mapper.Map<List<OpportunityVM>>(await _opportunitiesService.GetAllOpportunitiesAsync());
+                model.ExistingOpportunities = allOpportunities;
+                TempData["Message"] = "Silmek için en az bir kategori seçmelisiniz.";
+                return View(model);
+            }
+
+            var selectedOpportunities = await _opportunitiesService.GetOpportunitiesByIdsAsync(model.SelectedOpportunityIds);
+            var imagePaths = selectedOpportunities.Select(c => c.ImagePath).Where(x => !string.IsNullOrEmpty(x)).ToList();
+
+            // veritabanindan sil
+            await _opportunitiesService.RemoveOpportunityByIdsAsync(model.SelectedOpportunityIds);
+
+            // dosyalari sil
+            foreach (var path in imagePaths)
+            {
+                await _fileService.DeleteFileAsync(path);
+            }
+
+            // guncellenmis listeyi getir
+            model.ExistingOpportunities = _mapper.Map<List<OpportunityVM>>(await _opportunitiesService.GetAllOpportunitiesAsync());
+            TempData["Message"] = "Secili Firsatlar Basariyla Silindi";
+            return View(model);
         }
     }
 }

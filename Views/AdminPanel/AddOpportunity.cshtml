@@ -55,6 +55,12 @@
                 Fırsatı Ekle
             </button>
         </div>
+        @if (TempData["Message"] != null)
+        {
+            <div class="mt-6">
+                <p>@TempData["Message"]</p>
+            </div>
+        }
     </form>
 </div>
 @section Scripts {
