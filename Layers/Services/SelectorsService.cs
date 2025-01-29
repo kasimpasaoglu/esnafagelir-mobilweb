@@ -42,6 +42,11 @@ public class SelectorsService : ISelectorsService
         var districtsListDMO = await _districtsRepo.FindAsync(x => x.CityId == cityId);
         return _mapper.Map<List<DistrictDTO>>(districtsListDMO);
     }
+    public async Task<int> GetCityIdByDisrictId(int discrictId)
+    {
+        var district = await _districtsRepo.FindAsync(x => x.DistrictId == discrictId);
+        return district?.FirstOrDefault().CityId ?? 0;
+    }
 
     public async Task<List<RoleDTO>> GetRolesList()
     {
@@ -55,6 +60,7 @@ public interface ISelectorsService
 {
     Task<List<CityDTO>> GetCitiesList();
     Task<List<DistrictDTO>> GetDistrictsByCityId(int cityId);
+    Task<int> GetCityIdByDisrictId(int discrictId);
     Task<List<RoleDTO>> GetRolesList();
     Task<List<BusinessTypeDTO>> GetBusinessTypesList();
 

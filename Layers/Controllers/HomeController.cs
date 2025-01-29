@@ -13,20 +13,22 @@ public class HomeController : Controller
     private readonly ISelectorsService _selectorsService;
     private readonly IUpdateService _updateService;
     private readonly IOpportunitiesService _opportunitiesService;
+
     private readonly IMapper _mapper;
     private readonly IValidator<MyProfileVM> _updateValidator;
 
     private readonly List<RoleVM> _rolesList;
     private readonly List<BusinessTypeVM> _businessTypesList;
-    private CookieOptions CookieOptions { get; set; } = new CookieOptions
-    {
-        Expires = DateTime.Now.AddDays(90),
-        HttpOnly = true,
-        Secure = false,
-        SameSite = SameSiteMode.Strict
-    };
+    private readonly List<CityVM> _cityList;
+    private readonly List<DistrictVM> _districtList;
 
-    public HomeController(ISelectorsService selectorsService, IMapper mapper, IValidator<MyProfileVM> updateValidator, IUpdateService updateService, IOpportunitiesService opportunitiesService)
+    public HomeController(
+        ISelectorsService selectorsService,
+        IMapper mapper,
+        IValidator<MyProfileVM> updateValidator,
+        IUpdateService updateService,
+        IOpportunitiesService opportunitiesService
+        )
     {
         _selectorsService = selectorsService;
         _updateService = updateService;
@@ -36,6 +38,7 @@ public class HomeController : Controller
 
         _rolesList = _mapper.Map<List<RoleVM>>(_selectorsService.GetRolesList().Result.ToList());
         _businessTypesList = _mapper.Map<List<BusinessTypeVM>>(_selectorsService.GetBusinessTypesList().Result.ToList());
+        _cityList = _mapper.Map<List<CityVM>>(_selectorsService.GetCitiesList().Result.ToList());
     }
 
     public IActionResult Index()
@@ -62,7 +65,7 @@ public class HomeController : Controller
     }
 
 
-    public IActionResult MyProfile()
+    public async Task<IActionResult> MyProfile()
     {
         var userString = HttpContext.Session.GetString("UserVM");
         if (string.IsNullOrEmpty(userString))
@@ -79,16 +82,27 @@ public class HomeController : Controller
         }
         var business = JsonConvert.DeserializeObject<BusinessVM>(businessString); // business
 
-        return View(new MyProfileVM
+        var selectedDisrictId = business.DistrictId;
+        var selectedCityId = await _selectorsService.GetCityIdByDisrictId(selectedDisrictId);
+
+        var disrictList = await _selectorsService.GetDistrictsByCityId(selectedCityId);
+
+        var model = new MyProfileVM
         {
             User = user,
             Business = business,
             Roles = _rolesList,
             BusinessTypes = _businessTypesList,
+            Cities = _cityList,
+            Districts = _mapper.Map<List<DistrictVM>>(disrictList),
+            SelectedCityId = selectedCityId,
+            SelectedDisrictId = selectedDisrictId,
             SelectedRoleId = user.RoleId,
             SelectedBusinessTypeId = business.BusinessTypeId,
-        });
+        };
+        return View(model);
     }
+
     [HttpPost]
     public async Task<IActionResult> MyProfile(MyProfileVM model)
     {
@@ -97,7 +111,6 @@ public class HomeController : Controller
         {
             return RedirectToAction("Index", "Login");
         }
-
         var user = JsonConvert.DeserializeObject<UserVM>(userString); // user
 
         var businessString = HttpContext.Session.GetString("BusinessVM");
@@ -108,34 +121,55 @@ public class HomeController : Controller
         var business = JsonConvert.DeserializeObject<BusinessVM>(businessString); // business
 
 
+
         if (!model.IsEditMode)
         {   // edit mode ac, modeli toparla gonder
             ModelState.Clear();
             model.IsEditMode = true;
+
             model.User = user;
             model.Business = business;
+
             model.Roles = _rolesList;
-            model.BusinessTypes = _businessTypesList;
             model.SelectedRoleId = user.RoleId;
+
+            model.BusinessTypes = _businessTypesList;
             model.SelectedBusinessTypeId = business.BusinessTypeId;
+
+            model.Cities = _cityList;
+            model.SelectedCityId = await _selectorsService.GetCityIdByDisrictId(business.DistrictId);
+
+            model.Districts = _mapper.Map<List<DistrictVM>>(await _selectorsService.GetDistrictsByCityId(model.SelectedCityId));
+            model.SelectedDisrictId = business.DistrictId;
+
             return View(model);
         }
+
         var validationResult = _updateValidator.Validate(model);
 
         if (!validationResult.IsValid)
         {
             model.Roles = _rolesList;
+
             model.BusinessTypes = _businessTypesList;
+
+            model.Cities = _cityList;
+
+            model.Districts = _mapper.Map<List<DistrictVM>>(await _selectorsService.GetDistrictsByCityId(model.SelectedCityId));
+
             return View(model);
         }
+
         #region  Validasyon basariliysa formdan gelen model icindeki degerleri, sessiondan alinan user ve business modellerinin icine yerlestir
         user.Name = model.User.Name;
         user.Surname = model.User.Surname;
         user.PhoneNumber = model.User.PhoneNumber;
         user.RoleId = model.SelectedRoleId;
+
         business.BusinessName = model.Business.BusinessName;
         business.BusinessTypeId = model.SelectedBusinessTypeId;
         business.Address = model.Business.Address;
+        business.DistrictId = model.SelectedDisrictId;
         #endregion
 
         var userDTO = _mapper.Map<UserDTO>(user);
@@ -154,8 +188,18 @@ public class HomeController : Controller
         #region son halini modele koy
         model.User = user;
         model.Business = business;
+
         model.Roles = _rolesList;
+        model.SelectedRoleId = user.RoleId;
+
         model.BusinessTypes = _businessTypesList;
+        model.SelectedBusinessTypeId = business.BusinessTypeId;
+
+        model.Cities = _cityList;
+        model.SelectedCityId = await _selectorsService.GetCityIdByDisrictId(business.DistrictId);
+
+        model.Districts = _mapper.Map<List<DistrictVM>>(await _selectorsService.GetDistrictsByCityId(model.SelectedCityId));
+        model.SelectedDisrictId = business.DistrictId;
         #endregion
 
         // Guncellenmis halini sessiona geri koy

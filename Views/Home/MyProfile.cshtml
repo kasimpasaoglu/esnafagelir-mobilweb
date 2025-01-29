@@ -5,12 +5,18 @@
 }
 
 @{
-    var htmlAttributes = new Dictionary<string, object>
+        var htmlAttributes = new Dictionary<string, object>
 {{"class", "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2"}};
+    var htmlAttributesCities = new Dictionary<string, object>
+{{"class", "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2"}, {"id", "cityDropdown"}};
+    var htmlAttributesDisricts = new Dictionary<string, object>
+{{"class", "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2"}, {"id", "districtDropdown"}};
 
     if (!Model.IsEditMode)
     {
         htmlAttributes.Add("disabled", "disabled");
+        htmlAttributesCities.Add("disabled", "disabled");
+        htmlAttributesDisricts.Add("disabled", "disabled");
     }
 }
 
@@ -101,7 +107,7 @@
                     <input readonly="@(!Model.IsEditMode)"
                         class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full bg-appBgMain"
                         asp-for="User.PhoneNumber" type="tel">
-                    <span class="text-appWarning text-sm" asp-validation-for="User.Surname"></span>
+                    <span class="text-appWarning text-sm" asp-validation-for="User.PhoneNumber"></span>
                 </div>
                 <div>
                     <label asp-for="SelectedRoleId" class="text-appStroke text-xs font-inter font-normal">İşletmedeki
@@ -145,10 +151,59 @@
                         asp-for="Business.Address"></textarea>
                     <span class="text-appWarning text-sm" asp-validation-for="Business.Address"></span>
                 </div>
+                
+                <div>
+                    <label asp-for="SelectedCityId" class="text-appStroke text-xs font-inter font-normal">İl</label>
+                    @Html.DropDownListFor(
+                        s=> s.SelectedCityId,
+                        new SelectList(Model.Cities, "CityId", "CityName"),
+                        "Seçiniz",
+                        htmlAttributesCities
+                        )
+                    <span class="text-appWarning text-sm" asp-validation-for="SelectedCityId"></span>
+                </div>
+                
+                <div>
+                    <label asp-for="SelectedDisrictId" class="text-appStroke text-xs font-inter font-normal">İlçe</label>
+                    @Html.DropDownListFor(
+                        s=> s.SelectedDisrictId,
+                        new SelectList(Model.Districts, "DistrictId", "DistrictName"),
+                        "Seçiniz",
+                        htmlAttributesDisricts
+                        )
+                    <span class="text-appWarning text-sm" asp-validation-for="SelectedDisrictId"></span>
+                </div>
             </div>
         </div>
     </form>
 </div>
+
+<script>
+    document.getElementById("cityDropdown").addEventListener("change", function () {
+        const cityId = this.value
+        const districtDropdown = document.getElementById("districtDropdown")
+
+        if (!cityId) {
+            districtDropdown.innerHTML = '<option value="">Önce Şehir Seçiniz</option>';
+            return
+        }
+
+        fetch(`/Register/GetDistrictsByCityId?cityId=${cityId}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+
+                districtDropdown.innerHTML = '<option value="0">Seçiniz</option>'
+                data.forEach(district => {
+                    const option = document.createElement("option")
+                    option.value = district.districtId
+                    option.textContent = district.districtName                   
+                    districtDropdown.appendChild(option)
+                });
+            })
+            .catch(error => console.error("Hata:", error))
+    });
+</script>
 
 <script>
     // Debounce fonksiyonu: Bir süre boyunca başka çağrı gelmezse işlemi gerçekleştirir

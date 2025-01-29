@@ -30,6 +30,12 @@ public class UpdateValidator : AbstractValidator<MyProfileVM>
         RuleFor(x => x.SelectedBusinessTypeId)
             .GreaterThan(0).WithMessage("Lütfen işletme tipini seçiniz.");
 
+        RuleFor(x => x.SelectedCityId)
+            .GreaterThan(0).WithMessage("Lütfen il seçiniz");
+
+        RuleFor(x => x.SelectedDisrictId)
+            .GreaterThan(0).WithMessage("Lütfen ilçe seçiniz");
+
         RuleFor(x => x.Business.Address)
            .NotEmpty().WithMessage("Adres alanı zorunludur.")
            .Must(ContainsRequiredKeywords).WithMessage("Adres alanına mahalle, sokak, cadde, no gibi bilgileri açıkça giriniz.");

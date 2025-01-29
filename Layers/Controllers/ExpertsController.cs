@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 public class ExpertController : Controller
 {
@@ -20,6 +21,8 @@ public class ExpertController : Controller
 
     public IActionResult Form(int CategoryId)
     {
+        var user = JsonConvert.DeserializeObject<UserVM>(HttpContext.Session.GetString("UserVM"));
+        var business = JsonConvert.DeserializeObject<BusinessVM>(HttpContext.Session.GetString("BusinessVM"));
         return View();
     }
 
