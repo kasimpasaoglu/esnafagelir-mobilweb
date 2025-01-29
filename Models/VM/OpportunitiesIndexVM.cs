@@ -1,6 +1,6 @@
 public class OpportunitiesIndexVM
 {
-    public List<CardMainModel> PrimaryList { get; set; }
-    public List<CardMainModel> SecondaryList { get; set; }
+    public List<OpportunityVM> PrimaryList { get; set; }
+    public List<OpportunityVM> SecondaryList { get; set; }
 
 }

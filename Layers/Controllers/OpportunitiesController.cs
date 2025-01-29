@@ -1,17 +1,31 @@
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Razor.Templating.Core;
 
 public class OpportunitiesController : Controller
 {
-    public IActionResult Index()
+    private readonly IOpportunitiesService _opportunitiesService;
+    private readonly IMapper _mapper;
+
+    public OpportunitiesController(IOpportunitiesService opportunitiesService, IMapper mapper)
     {
-        var list = CMS.FirsatlarKartlari().ToList();
+        _opportunitiesService = opportunitiesService;
+        _mapper = mapper;
+    }
+    public async Task<IActionResult> Index()
+    {
+        var primaryListDMO = await _opportunitiesService.GetPrimaryOpportunitiesAsync();
+        var primaryList = _mapper.Map<List<OpportunityVM>>(primaryListDMO);
+
+        var secondaryListDMO = await _opportunitiesService.GetSecondaryOpportunitiesAsync();
+        var secondaryList = _mapper.Map<List<OpportunityVM>>(secondaryListDMO);
+
         var model = new OpportunitiesIndexVM
         {
-            PrimaryList = list.Where(x => x.IsPrimary && x.EndDate > DateTime.Now).OrderByDescending(x => x.ReleaseDate).Take(5).ToList(),
-            SecondaryList = list.Where(x => !x.IsPrimary && x.EndDate > DateTime.Now).OrderByDescending(x => x.ReleaseDate).Take(5).ToList(),
+            PrimaryList = primaryList.OrderByDescending(x => x.CreatedDate).ToList(),
+            SecondaryList = secondaryList.OrderByDescending(x => x.CreatedDate).Take(5).ToList(),
         };
         return View(model);
     }
@@ -20,12 +34,11 @@ public class OpportunitiesController : Controller
     public async Task<IActionResult> GetMoreOpportunities([FromQuery] int page)
     {
         int pageSize = 5;
-        var items = CMS.FirsatlarKartlari()
-                       .Where(x => !x.IsPrimary && x.EndDate > DateTime.Now)
-                       .OrderByDescending(x => x.ReleaseDate)
+        var items = _opportunitiesService.GetSecondaryOpportunitiesAsync().Result
+                       .OrderByDescending(x => x.CreatedDate)
                        .Skip((page - 1) * pageSize)
                        .Take(pageSize)
-                       .ToList();
+                       .ToList(); // bu filtreleme sorgu gonderilmeden once yapilmali, sorgu filtreye gore gonderilmeli, Su an butun liste geliyor her defasinda
 
         if (!items.Any())
         {

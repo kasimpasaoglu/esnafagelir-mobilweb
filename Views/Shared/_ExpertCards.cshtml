@@ -1,29 +1,9 @@
 @model ExpertCategoryVM
-@{
-    string imagePath = "";
-    switch (Model.ExpertCategoryId)
-    {
-        case 1:
-            imagePath = "/images/expert/socialMedia.png";
-            break;
-        case 2:
-            imagePath = "/images/expert/webSite.png";
-            break;
-        case 3:
-            imagePath = "/images/expert/seo.png";
-            break;
-        case 4:
-            imagePath = "/images/expert/design.png";
-            break;
-        default:
-            imagePath = "/images/expert/socialMedia.png"; // varsayilan resim
-            break;
-    }
-}
+
 <a href="/Experts/Contact?CategoryId=@Model.ExpertCategoryId"
-    class="bg-appCartBg text-appText p-[0.625rem] flex gap-3 rounded-3xl w-full no-underline items-center justify-around">
-    <img class="w-14 h-14" src="@imagePath" alt="Web Site">
-    <div>
+    class="bg-appCartBg text-appText p-[0.625rem] flex gap-3 rounded-3xl no-underline items-center justify-evenly">
+    <img class="w-14 h-14" src="@Model.ImagePath" alt="Web Site">
+    <div class="w-96">
         <h1 class="text-base font-semibold">@Model.CategoryName</h1>
         <p>@Model.CategoryDescription</p>
     </div>

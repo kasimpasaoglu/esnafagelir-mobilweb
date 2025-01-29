@@ -12,6 +12,7 @@ public class HomeController : Controller
 {
     private readonly ISelectorsService _selectorsService;
     private readonly IUpdateService _updateService;
+    private readonly IOpportunitiesService _opportunitiesService;
     private readonly IMapper _mapper;
     private readonly IValidator<MyProfileVM> _updateValidator;
 
@@ -25,10 +26,11 @@ public class HomeController : Controller
         SameSite = SameSiteMode.Strict
     };
 
-    public HomeController(ISelectorsService selectorsService, IMapper mapper, IValidator<MyProfileVM> updateValidator, IUpdateService updateService)
+    public HomeController(ISelectorsService selectorsService, IMapper mapper, IValidator<MyProfileVM> updateValidator, IUpdateService updateService, IOpportunitiesService opportunitiesService)
     {
         _selectorsService = selectorsService;
         _updateService = updateService;
+        _opportunitiesService = opportunitiesService;
         _mapper = mapper;
         _updateValidator = updateValidator;
 
@@ -45,9 +47,10 @@ public class HomeController : Controller
         }
         var user = JsonConvert.DeserializeObject<UserVM>(userString);
 
-        #region Carousel cartlari gecici olarak elle dolduruldu sadece oncelikli isaretlenenler filtrelendi
-        var cards = CMS.FirsatlarKartlari().Where(x => x.IsPrimary && x.EndDate > DateTime.Now).OrderByDescending(x => x.ReleaseDate).ToList();
-        #endregion
+
+        var cardsDMO = _opportunitiesService.GetPrimaryOpportunitiesAsync().Result.OrderByDescending(x => x.CreatedDate).Take(5).ToList();
+        var cards = _mapper.Map<List<OpportunityVM>>(cardsDMO);
+
 
         var indexVm = new HomeIndexVM()
         {

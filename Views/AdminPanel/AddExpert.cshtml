@@ -1,0 +1,50 @@
+@model ExpertCategoryAdminPage
+@{
+    ViewData["Title"] = "Uzmanlik Kategorisi Ekle";
+}
+@await Html.PartialAsync("_HeaderPartial", new HeaderModel
+{
+    Text = "Uzmanlik Kategorisi Ekle",
+    ArrowLink = "/AdminPanel/Index",
+})
+<form enctype="multipart/form-data" action="/AdminPanel/AddExpert"
+    class="flex flex-col justify-between gap-5 py-10 px-2 bg-appCartBg text-appText " method="post">
+    <div class="flex flex-col">
+        <label asp-for="NewCategory.CategoryName">Başlık</label>
+        <input class="px-2 py-4 border" asp-for="NewCategory.CategoryName" />
+        <span class="text-xs text-appWarning" asp-validation-for="NewCategory.CategoryName"></span>
+    </div>
+    <div class="flex flex-col">
+        <label asp-for="NewCategory.CategoryDescription">Açıklama</label>
+        <textarea class="px-2 py-4 border" asp-for="NewCategory.CategoryDescription"></textarea>
+        <span class="text-xs text-appWarning" asp-validation-for="NewCategory.CategoryDescription"></span>
+    </div>
+    <div class="flex flex-col">
+        <label asp-for="NewCategory.ImageFile">Görsel Yükle</label>
+        <input class="px-2 py-4 border" type="file" asp-for="NewCategory.ImageFile" accept="image/*" />
+        <span class="text-xs text-appWarning" asp-validation-for="NewCategory.ImageFile"></span>
+    </div>
+    @if (TempData["Message"] != null)
+    {
+        <div class="text-appPrimary">
+            @TempData["Message"]
+        </div>
+    }
+    <button class="bg-appPrimary text-appCartBg py-1 rounded-full w-32 self-center hover:bg-appSecondary"
+        type="submit">Kaydet</button>
+</form>
+<div class="flex flex-col items-center gap-3 mt-4 px-2">
+    <h1 class="text-xl">Mevcut Kategoriler</h1>
+    @foreach (var item in Model.ExistingCategoriesList)
+    {
+        <div id="@item.ExpertCategoryId"
+            class="bg-appCartBg text-appText p-[0.625rem] flex gap-3 rounded-3xl no-underline items-center justify-between w-full">
+            <img class="w-14 h-14" src="@item.ImagePath" alt="Web Site">
+            <div>
+                <h1 class="text-base font-semibold">@item.CategoryName</h1>
+                <p class="text-sm">@item.CategoryDescription</p>
+            </div>
+            <img class="h-8 w-8" src="~/images/shared/cardRightArrow.png" alt="NavButton">
+        </div>
+    }
+</div>

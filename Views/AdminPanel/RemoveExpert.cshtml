@@ -1,0 +1,36 @@
+@model ExpertCategoryAdminPage
+@{
+    ViewData["Title"] = "Uzmanlık Kategorisi Sil";
+}
+
+@await Html.PartialAsync("_HeaderPartial", new HeaderModel
+{
+    Text = "Uzmanlık Kategorisi Sil",
+    ArrowLink = "/AdminPanel/Index",
+})
+
+<form method="post" action="/AdminPanel/RemoveExpert">
+    <div class="flex flex-col items-center gap-3 mt-4 px-2">
+        <h1 class="text-xl">Mevcut Kategoriler</h1>
+        @foreach (var item in Model.ExistingCategoriesList)
+        {
+            <div id="@item.ExpertCategoryId"
+                class="bg-appCartBg text-appText p-[0.625rem] flex gap-3 rounded-3xl no-underline items-center justify-between w-full">
+                <input type="checkbox" name="SelectedCategoryIds" value="@item.ExpertCategoryId">
+                <img class="w-14 h-14" src="@item.ImagePath" alt="Web Site">
+                <div>
+                    <h1 class="text-base font-semibold">@item.CategoryName</h1>
+                    <p class="text-sm">@item.CategoryDescription</p>
+                </div>
+                <img class="h-8 w-8" src="~/images/shared/cardRightArrow.png" alt="NavButton">
+            </div>
+        }
+        <button type="submit" class="bg-appWarning text-white px-6 py-2 rounded-full font-bold">
+            Seçili Kategorileri Sil
+        </button>
+        @if (TempData["Message"] != null)
+        {
+            <h1>@TempData["Message"]</h1>
+        }
+    </div>
+</form>

@@ -3,6 +3,7 @@ using esnafagelir_mobilweb.DataAccessLayer;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
@@ -30,6 +31,8 @@ builder.Services.AddScoped<ISelectorsService, SelectorsService>();
 builder.Services.AddScoped<IUpdateService, UpdateService>();
 builder.Services.AddScoped<IContactUsService, ContactUsService>();
 builder.Services.AddScoped<IExpertService, ExpertsService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IOpportunitiesService, OpportunitiesService>();
 
 //session config
 builder.Services.AddSession(option =>
@@ -37,6 +40,16 @@ builder.Services.AddSession(option =>
     option.IdleTimeout = TimeSpan.FromDays(1);
 });
 
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.MaxRequestBodySize = 30000000; // yaklaşık 30MB
+});
+
+// Kestrel için
+builder.Services.Configure<KestrelServerOptions>(options =>
+{
+    options.Limits.MaxRequestBodySize = 30000000; // yaklaşık 30MB
+});
 
 var cultureInfo = new CultureInfo("tr-TR");
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;

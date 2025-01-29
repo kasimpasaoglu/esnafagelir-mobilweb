@@ -52,6 +52,15 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         _dbSet.Remove(entity);
     }
+    public void RemoveBy(Expression<Func<T, bool>> expression)
+    {
+        var entities = _dbSet.Where(expression).ToList();
+        if (entities.Any())
+        {
+            _dbSet.RemoveRange(entities);
+        }
+    }
+
 
     public void RemoveRange(IEnumerable<T> entities)
     {

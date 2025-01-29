@@ -1,10 +1,10 @@
-@model CardMainModel
-<div class="bg-appCartBg text-appText w-60 p-[0.625rem] flex flex-col gap-3 flex-shrink-0 rounded-3xl">
+@model OpportunityVM
+<a href="@Model.Url" class="bg-appCartBg text-appText w-60 p-[0.625rem] flex flex-col gap-3 flex-shrink-0 rounded-3xl">
     <div class="relative">
-        <img class="rounded-2xl" src="@Model.ImgUrl" alt="@Model.Title">
+        <img class="rounded-2xl" src="@Model.ImagePath" alt="@Model.Title">
         <img class="absolute -top-1 right-0 rounded-full bg-appCartBg p-1" src="~/images/shared/HeartAdd.svg"
             alt="FavoriteIcon">
     </div>
     <h1 class="text-base font-semibold">@Model.Title</h1>
     <p class="text-sm">@Model.Description</p>
-</div>
+</a>

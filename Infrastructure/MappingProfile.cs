@@ -34,6 +34,9 @@ public class MappingProfile : Profile
 
         CreateMap<Role, RoleDTO>().ReverseMap();
         CreateMap<RoleDTO, RoleVM>().ReverseMap();
+
+        CreateMap<Opportunity, OpportunityDTO>().ReverseMap();
+        CreateMap<OpportunityDTO, OpportunityVM>().ReverseMap();
         #endregion
 
     }

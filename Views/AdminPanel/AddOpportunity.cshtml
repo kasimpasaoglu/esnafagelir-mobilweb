@@ -1,0 +1,62 @@
+@model OpportunitiesAdminPage
+
+@{
+    ViewData["Title"] = "Firsat Ekle";
+}
+@await Html.PartialAsync("_HeaderPartial", new HeaderModel
+{
+    Text = "Firsat Ekle",
+    ArrowLink = "/AdminPanel/Index",
+})
+
+<div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
+    <form asp-action="AddOpportunity" asp-controller="AdminPanel" method="post" enctype="multipart/form-data">
+        <div class="mb-4 text-appText">
+            <label asp-for="NewOpportunity.Title" class="block font-medium text-lg">Başlık</label>
+            <input asp-for="NewOpportunity.Title" class="mt-1 block w-full px-3 py-2 border rounded-md" />
+            <span asp-validation-for="NewOpportunity.Title" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div class="mb-4 text-appText">
+            <label asp-for="NewOpportunity.Description" class="block font-medium text-lg">Açıklama</label>
+            <textarea asp-for="NewOpportunity.Description" rows="3"
+                class="mt-1 block w-full px-3 py-2 border rounded-md"></textarea>
+            <span asp-validation-for="NewOpportunity.Description" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div class="mb-4 text-appText">
+            <label asp-for="NewOpportunity.ImageFile" class="block font-medium text-lg">Görsel
+                Yükle</label>
+            <input asp-for="NewOpportunity.ImageFile" type="file" class="mt-1 block w-full border rounded-md" />
+            <span asp-validation-for="NewOpportunity.ImageFile" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div class="mb-4 text-appText">
+            <label asp-for="NewOpportunity.Url" class="block font-medium text-lg">Bağlantı
+                (Opsiyonel)</label>
+            <input asp-for="NewOpportunity.Url" type="url" class="mt-1 block w-full px-3 py-2 border rounded-md" />
+        </div>
+
+        <div class="mb-4 text-appText">
+            <label asp-for="NewOpportunity.EndDate" class="block font-medium text-lg">Bitiş Tarihi</label>
+            <input asp-for="NewOpportunity.EndDate" type="datetime-local"
+                class="mt-1 block w-full px-3 py-2 border rounded-md" />
+            <span asp-validation-for="NewOpportunity.EndDate" class="text-red-500 text-sm"></span>
+        </div>
+
+        <div class="mb-4 text-appText flex items-center">
+            <input asp-for="NewOpportunity.IsPrimary" type="checkbox" class="h-4 w-4  border-appWarning rounded">
+            <label asp-for="NewOpportunity.IsPrimary" class="ml-2 block text-base text-appWarning">Öne Çıkan
+                Fırsat</label>
+        </div>
+
+        <div class="mt-6">
+            <button type="submit" class="w-full bg-appPrimary text-white font-semibold text-xl py-2 px-4 rounded-full">
+                Fırsatı Ekle
+            </button>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

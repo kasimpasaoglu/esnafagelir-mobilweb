@@ -30,6 +30,8 @@ public partial class DataBaseContext : DbContext
 
     public virtual DbSet<ExpertRequest> ExpertRequests { get; set; }
 
+    public virtual DbSet<Opportunity> Opportunities { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
@@ -104,6 +106,7 @@ public partial class DataBaseContext : DbContext
 
             entity.Property(e => e.CategoryDescription).HasMaxLength(255);
             entity.Property(e => e.CategoryName).HasMaxLength(100);
+            entity.Property(e => e.ImagePath).HasMaxLength(255);
         });
 
         modelBuilder.Entity<ExpertRequest>(entity =>
@@ -131,6 +134,19 @@ public partial class DataBaseContext : DbContext
                 .HasConstraintName("FK__ExpertReq__UserI__4E88ABD4");
         });
 
+        modelBuilder.Entity<Opportunity>(entity =>
+        {
+            entity.HasKey(e => e.OpportunityId).HasName("PK__Opportun__0034ED917FA1D6F5");
+
+            entity.Property(e => e.CreatedDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.EndDate).HasColumnType("datetime");
+            entity.Property(e => e.ImagePath).HasMaxLength(255);
+            entity.Property(e => e.Title).HasMaxLength(255);
+            entity.Property(e => e.Url).HasMaxLength(255);
+        });
+
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasKey(e => e.RoleId).HasName("PK__Roles__8AFACE1AA2BCA379");
@@ -142,6 +158,7 @@ public partial class DataBaseContext : DbContext
         {
             entity.HasKey(e => e.UserId).HasName("PK__Users__1788CC4CB599E800");
 
+            entity.Property(e => e.DeviceId).HasMaxLength(36);
             entity.Property(e => e.LastLogin).HasColumnType("datetime");
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.PhoneNumber).HasMaxLength(15);
