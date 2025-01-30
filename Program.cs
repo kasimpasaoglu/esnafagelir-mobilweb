@@ -33,6 +33,7 @@ builder.Services.AddScoped<IContactUsService, ContactUsService>();
 builder.Services.AddScoped<IExpertService, ExpertsService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IOpportunitiesService, OpportunitiesService>();
+builder.Services.AddScoped<IExpertRequestService, ExpertRequestService>();
 
 //session config
 builder.Services.AddSession(option =>

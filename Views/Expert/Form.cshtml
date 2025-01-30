@@ -1,1 +1,187 @@
-<div>Form</div>
+@model ExpertRequestFormMain
+
+@{
+    ViewData["Title"] = "Uzman İletişim";
+}
+
+@{
+    var htmlAttributes = new Dictionary<string, object>{
+        {"class", "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2"}};
+    
+    var htmlAttributesCities = new Dictionary<string, object>{
+        {"class", "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2"}, {"id", "cityDropdown"}};
+    
+    var htmlAttributesDisricts = new Dictionary<string, object>{
+        {"class", "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2"}, {"id", "districtDropdown"}};
+}
+
+@await Html.PartialAsync("_HeaderPartial", new HeaderModel
+{
+    Text = "Uzman İletişim",
+    ArrowLink = "/Expert/Index",
+})
+<div class="flex flex-col p-4 mb-14">
+    <form action="/Expert/Form" method="post">
+        <input asp-for="ExpertCategoryId" type="hidden">
+    @* Iletisim Izni *@
+        <div class="grid grid-cols-3 gap-3 border-b-[1px] border-appStroke pb-3">
+
+            <img class="col-span-1 w-full" src="~/images/expert/infoCircle.png" alt="Info Icon">
+            <div class="col-span-2 text-appText">
+                <h1 class="text-base font-semibold">Uzmanlar Size Ulaşsın</h1>
+                <p class="text-sm">Esnafa Gelir’e kayıt yaptırmış uzmanlardan size en uygun olanını bulacak ve sizinle iletişime geçmesi için bilgilerinizi yönlendireceğiz.</p>
+            </div>
+
+            <div class="col-span-3">
+                <div class="flex items-center justify-between mt-4 relative">
+                    <div class="flex flex-col gap-5">
+                        <p class="text-sm text-appSecondary">Aşağıdaki bilgilerin paylaşılmasını onaylıyorum.</p>
+                    </div>
+                    <label class="relative inline-flex items-center">
+                        <input id="allowsCoop" type="checkbox" asp-for="IsConfirmSharingData" class="sr-only peer">
+                        <div class="w-[3.20rem] h-8 bg-gray-200 rounded-full peer peer-checked:bg-appSecondary">
+                        </div>
+                        <div
+                            class="absolute top-1 left-1 bg-white border border-gray-300 rounded-full h-6 w-6 peer-checked:translate-x-[calc(100%-0.30rem)] transition-transform">
+                        </div>
+                    </label>
+                </div>
+                <span class="col-span-3 text-appWarning text-sm" asp-validation-for="IsConfirmSharingData"></span>
+            </div>
+        </div>
+
+@* Profil Bilgileri Guncelleme Alani *@
+    
+        <div class="w-full flex flex-col gap-8">
+
+            <div class="flex flex-col justify-center gap-6 mt-10">
+                <h1 class="text-[1.375rem] font-bold text-appText">İhtiyaç Detayı</h1>
+                <div>
+                    <label asp-for="Message" class="text-appStroke text-xs font-inter font-normal">Detaylı Bilgi</label>
+                    <textarea
+                        placeholder="Uzmanlardan beklentinizle ilgili birkaç detay bilgiyi bu alana giriniz..."
+                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full bg-appBgMain"
+                        asp-for="Message" type="text"></textarea>
+                    <span class="text-appWarning text-sm" asp-validation-for="Message"></span>
+                </div>
+
+                <h1 class="text-[1.375rem] font-bold text-appText">Profil Bilgileri</h1>
+                <div>
+                    <label asp-for="User.Name" class="text-appStroke text-xs font-inter font-normal">Ad</label>
+                    <input
+                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full bg-appBgMain"
+                        asp-for="User.Name" type="text">
+                    <span class="text-appWarning text-sm" asp-validation-for="User.Name"></span>
+                </div>
+                <div>
+                    <label asp-for="User.Surname" class="text-appStroke text-xs font-inter font-normal">Soyad</label>
+                    <input
+                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full bg-appBgMain"
+                        asp-for="User.Surname" type="text">
+                    <span class="text-appWarning text-sm" asp-validation-for="User.Surname"></span>
+                </div>
+                <div>
+                    <label asp-for="User.PhoneNumber" class="text-appStroke text-xs font-inter font-normal">Cep
+                        Telefonu</label>
+                    <input
+                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full bg-appBgMain"
+                        asp-for="User.PhoneNumber" type="tel">
+                    <span class="text-appWarning text-sm" asp-validation-for="User.PhoneNumber"></span>
+                </div>
+                <div>
+                    <label asp-for="SelectedRoleId" class="text-appStroke text-xs font-inter font-normal">İşletmedeki
+                        Rolü</label>
+                    @Html.DropDownListFor(
+                             s => s.SelectedRoleId,
+                             new SelectList(Model.Roles, "RoleId", "RoleName"),
+                             "Seçiniz",
+                             htmlAttributes)
+                    <span class="text-appWarning text-sm" asp-validation-for="SelectedRoleId"></span>
+                </div>
+            </div>
+
+            @* Isletme Bilgileri *@
+            <div class="flex flex-col justify-center gap-4">
+                <h1 class="text-[1.375rem] font-bold text-appText mt-5">İşletme Bilgileri</h1>
+                <div>
+                    <label asp-for="Business.BusinessName" class="text-appStroke text-xs font-inter font-normal">İşletme
+                        Adı</label>
+                    <input
+                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full bg-appBgMain"
+                        asp-for="Business.BusinessName" type="text">
+                    <span class="text-appWarning text-sm" asp-validation-for="Business.BusinessName"></span>
+                </div>
+                <div>
+                    <label asp-for="SelectedBusinessTypeId"
+                        class="text-appStroke text-xs font-inter font-normal">İşletme
+                        Türü</label>
+                    @Html.DropDownListFor(
+                             s => s.SelectedBusinessTypeId,
+                             new SelectList(Model.BusinessTypes, "BusinessTypeId", "BusinessTypeName"),
+                             "Seçiniz",
+                             htmlAttributes)
+                    <span class="text-appWarning text-sm" asp-validation-for="SelectedBusinessTypeId"></span>
+                </div>
+                <div>
+                    <label asp-for="Business.Address"
+                        class="text-appStroke text-xs font-inter font-normal">Adress</label>
+                    <textarea
+                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full bg-appBgMain"
+                        asp-for="Business.Address"></textarea>
+                    <span class="text-appWarning text-sm" asp-validation-for="Business.Address"></span>
+                </div>
+                
+                <div>
+                    <label asp-for="SelectedCityId" class="text-appStroke text-xs font-inter font-normal">İl</label>
+                    @Html.DropDownListFor(
+                        s=> s.SelectedCityId,
+                        new SelectList(Model.Cities, "CityId", "CityName"),
+                        "Seçiniz",
+                        htmlAttributesCities
+                        )
+                    <span class="text-appWarning text-sm" asp-validation-for="SelectedCityId"></span>
+                </div>
+                
+                <div>
+                    <label asp-for="SelectedDisrictId" class="text-appStroke text-xs font-inter font-normal">İlçe</label>
+                    @Html.DropDownListFor(
+                        s=> s.SelectedDisrictId,
+                        new SelectList(Model.Districts, "DistrictId", "DistrictName"),
+                        "Seçiniz",
+                        htmlAttributesDisricts
+                        )
+                    <span class="text-appWarning text-sm" asp-validation-for="SelectedDisrictId"></span>
+                </div>
+            </div>
+            @await Html.PartialAsync("_ButtonPartial", new ButtonModel{ Text = "Gönder", IsSubmit = true })
+        </div>
+    </form>
+</div>
+
+<script>
+    document.getElementById("cityDropdown").addEventListener("change", function () {
+        const cityId = this.value
+        const districtDropdown = document.getElementById("districtDropdown")
+
+        if (!cityId) {
+            districtDropdown.innerHTML = '<option value="">Önce Şehir Seçiniz</option>';
+            return
+        }
+
+        fetch(`/Register/GetDistrictsByCityId?cityId=${cityId}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+
+                districtDropdown.innerHTML = '<option value="0">Seçiniz</option>'
+                data.forEach(district => {
+                    const option = document.createElement("option")
+                    option.value = district.districtId
+                    option.textContent = district.districtName                   
+                    districtDropdown.appendChild(option)
+                });
+            })
+            .catch(error => console.error("Hata:", error))
+    });
+</script>
+
