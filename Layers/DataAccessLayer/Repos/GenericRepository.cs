@@ -33,6 +33,11 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await _dbSet.Where(expression).ToListAsync();
     }
 
+    public async Task<T> FindSingleAsync(Expression<Func<T, bool>> expression)
+    {
+        return await _dbSet.FirstOrDefaultAsync(expression);
+    }
+
     public async Task AddAsync(T entity)
     {
         await _dbSet.AddAsync(entity);

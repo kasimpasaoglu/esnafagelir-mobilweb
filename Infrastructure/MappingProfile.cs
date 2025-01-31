@@ -37,6 +37,9 @@ public class MappingProfile : Profile
 
         CreateMap<Opportunity, OpportunityDTO>().ReverseMap();
         CreateMap<OpportunityDTO, OpportunityVM>().ReverseMap();
+
+        CreateMap<Admin, AdminDTO>().ReverseMap();
+        CreateMap<AdminDTO, AdminVM>().ReverseMap();
         #endregion
 
     }

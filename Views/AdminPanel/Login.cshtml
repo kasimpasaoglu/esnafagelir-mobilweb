@@ -1,0 +1,33 @@
+@model AdminVM
+
+@{
+    ViewBag.Title = "Login";
+}
+<div
+    class="w-full bg-appPrimary text-[1.375rem] font-bold relative text-white h-[3.75rem] flex items-center justify-center">
+    <h1>Admin Panel</h1>
+</div>
+
+<form class="flex flex-col px-4 py-8 gap-10 justify-between" action="/AdminPanel/Login" method="post">
+
+    <div class="flex flex-col text-appText">
+        <label asp-for="UserName">Kullanici Adi :</label>
+        <input class="text-sm bg-appBgMain border-b py-3" type="text" asp-for="UserName"
+            placeholder="Kullanici Adiniz" />
+    </div>
+
+    <div class="flex flex-col text-appText">
+        <label asp-for="UserPassword">Sifre :</label>
+        <input class="text-sm bg-appBgMain border-b py-3" type="password" asp-for="UserPassword"
+            placeholder="Sifreniz" />
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <h1 class="text-center">
+            @TempData["Message"]
+        </h1>
+    }
+
+    @await Html.PartialAsync("_ButtonPartial", new ButtonModel { IsSubmit = true, Text = "Giris Yap" })
+</form>

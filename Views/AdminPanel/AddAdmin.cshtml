@@ -1,0 +1,42 @@
+@model AdminVM
+
+@{
+    ViewBag.Title = "Yönetici Girişi Oluşturma";
+}
+
+<div
+    class="w-full bg-appPrimary text-[1.375rem] font-bold relative text-white h-[3.75rem] flex items-center justify-center">
+    <h1>Yönetici Girişi Oluşturma</h1>
+</div>
+
+<form class="flex flex-col px-4 py-8 gap-10 justify-between" action="/AdminPanel/AddAdmin" method="post">
+
+    <div class="flex flex-col text-appText">
+        <label asp-for="UserName">Kullanıcı Adı :</label>
+        <input class="text-sm bg-appBgMain border-b p-1" type="text" asp-for="UserName" placeholder="Kullanıcı Adı">
+        <span class="text-xs text-appWarning" asp-validation-for="UserName"></span>
+    </div>
+
+    <div class="flex flex-col text-appText">
+        <label asp-for="UserPassword">Şifre :</label>
+        <input class="text-sm bg-appBgMain border-b p-1" type="password" asp-for="UserPassword" placeholder="Şifre">
+        <span class="text-xs text-appWarning" asp-validation-for="UserPassword"></span>
+    </div>
+
+    <div class="flex flex-col text-appText">
+        <label asp-for="ReUserPassword">Şifre Tekrar :</label>
+        <input class="text-sm bg-appBgMain border-b p-1" type="password" asp-for="ReUserPassword"
+            placeholder="Şifre Tekrar">
+        <span class="text-xs text-appWarning" asp-validation-for="ReUserPassword"></span>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <h1 class="text-center">
+            @TempData["Message"]
+        </h1>
+    }
+
+    @await Html.PartialAsync("_ButtonPartial", new ButtonModel { IsSubmit = true, Text = "Güncelle" })
+
+</form>

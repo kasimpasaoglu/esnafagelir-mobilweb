@@ -16,6 +16,8 @@ public partial class DataBaseContext : DbContext
     {
     }
 
+    public virtual DbSet<Admin> Admins { get; set; }
+
     public virtual DbSet<Business> Businesses { get; set; }
 
     public virtual DbSet<BusinessType> BusinessTypes { get; set; }
@@ -41,6 +43,13 @@ public partial class DataBaseContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Admin>(entity =>
+        {
+            entity.HasKey(e => e.AdminId).HasName("PK__Admins__719FE4883771158B");
+
+            entity.Property(e => e.DeviceId).HasMaxLength(36);
+        });
+
         modelBuilder.Entity<Business>(entity =>
         {
             entity.HasKey(e => e.BusinessId).HasName("PK__Business__F1EAA36E4308AF09");

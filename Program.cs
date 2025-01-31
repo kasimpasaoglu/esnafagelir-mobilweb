@@ -34,6 +34,7 @@ builder.Services.AddScoped<IExpertService, ExpertsService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IOpportunitiesService, OpportunitiesService>();
 builder.Services.AddScoped<IExpertRequestService, ExpertRequestService>();
+builder.Services.AddScoped<IAdminLoginService, AdminLoginService>();
 
 //session config
 builder.Services.AddSession(option =>

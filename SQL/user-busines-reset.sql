@@ -8,9 +8,12 @@ select * from Opportunities
 
 select * from ExpertCategories
 
-select * from Districts
+select * from ExpertRequests
 
-Update Districts SET DistrictName = '' where DistrictId = 0
+select * from Admins
+
+-- admin, **Admin123**
+
 
 
 
@@ -29,4 +32,5 @@ DBCC CHECKIDENT ('ExpertCategories', RESEED, 0);
 DELETE FROM Opportunities;
 DBCC CHECKIDENT ('Opportunities', RESEED, 0);
 
-
+DELETE FROM Admins;
+DBCC CHECKIDENT ('Admins', RESEED, 0);

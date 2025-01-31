@@ -2,6 +2,7 @@ using AutoMapper;
 using esnafagelir_mobilweb.DMO;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -10,41 +11,169 @@ namespace YourNamespace.Controllers
     public class AdminPanelController : Controller
     {
         private readonly IFileService _fileService;
+        private readonly IAdminLoginService _adminLoginService;
         private readonly IExpertService _expertService;
         private readonly IOpportunitiesService _opportunitiesService;
         private readonly IValidator<ExpertCategoryAdminModel> _expertValidator;
+        private readonly IValidator<AdminVM> _adminLoginValidator;
         private readonly IValidator<OpportunityAdminModel> _opportunityValidator;
         private readonly IMapper _mapper;
         public AdminPanelController(
             IFileService fileService,
+            IAdminLoginService adminLoginService,
             IExpertService expertService,
             IOpportunitiesService opportunitiesService,
             IValidator<ExpertCategoryAdminModel> expertValidator,
+            IValidator<AdminVM> adminLoginValidator,
             IMapper mapper,
             IValidator<OpportunityAdminModel> opportunityValidator
             )
         {
             _fileService = fileService;
+            _adminLoginService = adminLoginService;
             _expertService = expertService;
             _expertValidator = expertValidator;
+            _adminLoginValidator = adminLoginValidator;
             _opportunitiesService = opportunitiesService;
             _mapper = mapper;
             _opportunityValidator = opportunityValidator;
         }
 
-        public IActionResult Index()
+
+        #region Login Ekrani
+        public async Task<IActionResult> Login([FromQuery] string DeviceId)
         {
-            return View();
+            HttpContext.Session.SetString("DeviceId", DeviceId);
+            return View(new AdminVM());
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Login(AdminVM model)
+        {
+            var deviceId = HttpContext.Session.GetString("DeviceId");
+            model.DeviceId = deviceId;
+            try
+            {
+                await _adminLoginService.Login(model);
+                model.UserPassword = ""; // guvenlik icin sifre alanlarini temizle
+                model.ReUserPassword = "";
+                HttpContext.Session.SetString("Admin", JsonConvert.SerializeObject(model)); // modeli sessiona at
+                return RedirectToAction("Index"); // admin paneline yonlendir
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = ex.Message;
+            }
+            return View(model);
+        }
+        #endregion
+
+        #region Admin Logini guncelleme ekrani
+        public IActionResult UpdateAdmin()
+        {
+            var admin = JsonConvert.DeserializeObject<AdminVM>(HttpContext.Session.GetString("Admin"));
+            if (admin == null)
+            {
+                return RedirectToAction("Login");
+            }
+            return View(admin);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateAdmin(AdminVM model)
+        {
+            var validationResult = _adminLoginValidator.Validate(model);
+            if (!validationResult.IsValid)
+            {
+                return View(model);
+            }
+
+            string hashedPassword = ShaHelper.HashPassword(model.UserPassword, out string salt);
+
+            model.UserPassword = hashedPassword;
+            model.Salt = salt;
+            model.DeviceId = HttpContext.Session.GetString("DeviceId");
+
+            try
+            {
+                await _adminLoginService.UpdateAdminAsync(_mapper.Map<AdminDTO>(model));
+                HttpContext.Session.SetString("Admin", JsonConvert.SerializeObject(model));
+                HttpContext.Session.Remove("DeviceId");
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = ex.Message;
+            }
+            return View(model);
+        }
+        #endregion
+
+        #region Admin Kayit Ekrani (Sadece bir kere kullanilabilir, Sistemde kayitli bir admin varsa bu ekran acilmaz, deviceId olmadan acilmaz)
+        public async Task<IActionResult> AddAdmin([FromQuery] string deviceId)
+        {
+            if (deviceId == null) return NotFound(); // device id yok, giris yapilamaz
+
+            var adminList = await _adminLoginService.GetAdminsAsync();
+            if (adminList.Count > 0) return NotFound(); // sistemde kayitli admin var, bu ekrani acilamaz
+
+            HttpContext.Session.SetString("DeviceId", deviceId);
+            return View(new AdminVM());
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddAdmin(AdminVM model)
+        {
+            var validationResult = _adminLoginValidator.Validate(model);
+            if (!validationResult.IsValid)
+            {
+                return View(model);
+            }
+
+            string hashedPassword = ShaHelper.HashPassword(model.UserPassword, out string salt);
+
+            model.UserPassword = hashedPassword;
+            model.Salt = salt;
+            model.DeviceId = HttpContext.Session.GetString("DeviceId");
+
+            try
+            {
+                await _adminLoginService.CreateAdminAsync(_mapper.Map<AdminDTO>(model));
+                HttpContext.Session.Remove("DeviceId");
+                return RedirectToAction("Login");
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = ex.Message;
+            }
+            return View(model);
+        }
+        #endregion
+
+        #region ana menu
+        public IActionResult Index()
+        {
+            var admin = HttpContext.Session.GetString("Admin");
+            if (admin == null)
+            {
+                return RedirectToAction("Login");
+            }
+            return View();
+        }
+        #endregion
+
+        #region Uzmanlik Kategorileri Ekleme Ekrani
         public async Task<IActionResult> AddExpert()
         {
+            var admin = HttpContext.Session.GetString("Admin");
+            if (admin == null)
+            {
+                return RedirectToAction("Login");
+            }
             var dtoList = await _expertService.GetExpertCategoriesAsync();
             var vmList = _mapper.Map<List<ExpertCategoryVM>>(dtoList);
             var model = new ExpertCategoryAdminPage { ExistingCategoriesList = vmList };
             return View(model);
         }
-
         [HttpPost]
         public async Task<IActionResult> AddExpert(ExpertCategoryAdminPage model)
         {
@@ -90,15 +219,21 @@ namespace YourNamespace.Controllers
             TempData["Message"] = "Dosya başarıyla yüklendi";
             return View(model);
         }
+        #endregion
 
+        #region Uzmanlik kategorileri silme ekrani
         public async Task<IActionResult> RemoveExpert()
         {
+            var admin = HttpContext.Session.GetString("Admin");
+            if (admin == null)
+            {
+                return RedirectToAction("Login");
+            }
             var dtoList = await _expertService.GetExpertCategoriesAsync();
             var vmList = _mapper.Map<List<ExpertCategoryVM>>(dtoList);
             var model = new ExpertCategoryAdminPage { ExistingCategoriesList = vmList };
             return View(model);
         }
-
         [HttpPost]
         public async Task<IActionResult> RemoveExpert(ExpertCategoryAdminPage model)
         {
@@ -127,10 +262,16 @@ namespace YourNamespace.Controllers
             model.ExistingCategoriesList = _mapper.Map<List<ExpertCategoryVM>>(await _expertService.GetExpertCategoriesAsync());
             return View(model);
         }
+        #endregion
 
-
+        #region Firsat Ekleme Ekrani
         public IActionResult AddOpportunity()
         {
+            var admin = HttpContext.Session.GetString("Admin");
+            if (admin == null)
+            {
+                return RedirectToAction("Login");
+            }
             return View();
         }
         [HttpPost]
@@ -176,10 +317,16 @@ namespace YourNamespace.Controllers
             TempData["Message"] = "Dosya başarıyla yüklendi";
             return View(model);
         }
+        #endregion
 
-
+        #region Firsat Silme Ekrani
         public async Task<IActionResult> RemoveOpportunity()
         {
+            var admin = HttpContext.Session.GetString("Admin");
+            if (admin == null)
+            {
+                return RedirectToAction("Login");
+            }
             List<OpportunityVM> allOpportunities = _mapper.Map<List<OpportunityVM>>(await _opportunitiesService.GetAllOpportunitiesAsync());
 
             return View(new OpportunitiesAdminPage
@@ -187,7 +334,6 @@ namespace YourNamespace.Controllers
                 ExistingOpportunities = allOpportunities,
             });
         }
-
         [HttpPost]
         public async Task<IActionResult> RemoveOpportunity(OpportunitiesAdminPage model)
         {
@@ -216,5 +362,6 @@ namespace YourNamespace.Controllers
             TempData["Message"] = "Secili Firsatlar Basariyla Silindi";
             return View(model);
         }
+        #endregion
     }
 }
