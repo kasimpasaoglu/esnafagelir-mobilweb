@@ -138,8 +138,7 @@ namespace YourNamespace.Controllers
             try
             {
                 await _adminLoginService.CreateAdminAsync(_mapper.Map<AdminDTO>(model));
-                HttpContext.Session.Remove("DeviceId");
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", new { DeviceId = model.DeviceId });
             }
             catch (Exception ex)
             {
