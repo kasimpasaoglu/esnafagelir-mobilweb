@@ -48,7 +48,7 @@ public class ExpertController : Controller
         return View(_mapper.Map<List<ExpertCategoryVM>>(dtoModel));
     }
 
-    public async Task<IActionResult> Form(int expertCategoryId)
+    public async Task<IActionResult> Form([FromQuery] int expertCategoryId)
     {
         var user = JsonConvert.DeserializeObject<UserVM>(HttpContext.Session.GetString("UserVM"));
         var business = JsonConvert.DeserializeObject<BusinessVM>(HttpContext.Session.GetString("BusinessVM"));
