@@ -16,7 +16,7 @@ public class AdminLoginValidator : AbstractValidator<AdminVM>
             .Matches(@"[a-z]").WithMessage("Şifre en az bir küçük harf içermelidir.")
             .Matches(@"\d").WithMessage("Şifre en az bir rakam içermelidir.")
             .Matches(@"[!@#$%^&*()_+\-=\[\]{};':""\\|,.<>\/?]").WithMessage("Şifre en az bir özel karakter içermelidir (!@#$ vb.).")
-            .WithMessage("Şifre, kullanıcı adıyla aynı olmamalıdır.");
+            .Must((model, pasword) => pasword != model.UserName).WithMessage("Şifre, kullanıcı adıyla aynı olmamalıdır.");
 
         RuleFor(x => x.ReUserPassword)
             .NotNull().WithMessage("Şifre tekrarı boş olamaz.")
