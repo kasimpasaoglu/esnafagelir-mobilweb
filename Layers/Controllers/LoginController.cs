@@ -43,15 +43,23 @@ public class LoginController : Controller
 
         var user = await _loginService.FindByDeviceId(deviceId); // user'i bulmaya calis
 
-        if (user == null)
+        if (user == null || user.DeviceId != deviceId) // kullanici bulunamazsa ve ya device id degismisse
         {
             HttpContext.Session.SetString("DeviceID", deviceId);
-            return View(); // giris yapma ekraninda kal
+            return View(); // giris yapma ekraninda kal tekrar login yap
         }
+
+        var daysSinceRegister = (DateTime.Now - user.RegisterDate).TotalDays;
+        if (daysSinceRegister % 90 == 0) // kullanicinin kayit tarihinden itibaren 90 gun gecmisse (90-180... vs)
+        {
+            HttpContext.Session.SetString("DeviceID", deviceId);
+            return View(); // tekrar login iste
+        }
+
 
         // device id'den useri bulduysak...
         var userVM = _mapper.Map<UserVM>(user);
-        await _loginService.UpdateLastLoginDate(user); // LastLogin tarihi guncellensin TODO: Hata olursa ekrana goster???
+        await _loginService.UpdateLastLoginDate(user);
         var businessVm = _mapper.Map<BusinessVM>(await _loginService.FindBusinessById(userVM.BusinessId)); // business bilginisi sorgula
 
         HttpContext.Session.SetString("UserVM", JsonConvert.SerializeObject(userVM)); //  user bilgisini sessiona at
