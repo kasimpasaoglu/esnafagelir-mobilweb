@@ -3,69 +3,71 @@
     ViewData["Title"] = "Ana Sayfa";
 }
 
-<div class="flex flex-col py-11 px-4 gap-[2.375rem] mb-14">
-    @* Header *@
-    <div class="flex items-center justify-between w-full">
-        <div class="text-[1.375rem] font-bold text-appText">
-            @{
-                var hour = DateTime.Now.Hour;
-                string greetingMessage = hour switch
+<div class="bg-appBgMain w-full h-full">
+    <div class="flex flex-col py-11 px-4 gap-[2.375rem] mb-14">
+        @* Header *@
+        <div class="flex items-center justify-between w-full">
+            <div class="text-[1.375rem] font-bold text-appText">
+                @{
+                    var hour = DateTime.Now.Hour;
+                    string greetingMessage = hour switch
+                    {
+                        >= 6 and < 11 => "Günaydın,",
+                        >= 11 and < 18 => "İyi Günler,",
+                        >= 18 and < 22 => "İyi Akşamlar,",
+                        _ => "İyi Geceler,"
+                    };
+                }
+                <h1>@greetingMessage</h1>
+                <h1>
+                    @Model.User.Name @Model.User.Surname
+                </h1>
+            </div>
+            <a class="mr-5 p-2 bg-appBgSecondary rounded-full" href="/Home/MyProfile">
+                <img class="mr-1" src="~/images/home/Profile_button.svg" alt="Profile Button">
+            </a>
+        </div>
+    
+        @* Carousel *@
+        <div class="max-w-[100vm] flex flex-col gap-6">
+            <h1 class="text-[1.375rem] font-bold text-appText">Fırsatlar</h1>
+            <div class="flex flex-nowrap overflow-y-scroll gap-3 scrollbar-hide">
+                @foreach (var item in Model.MainCards)
                 {
-                    >= 6 and < 11 => "Günaydın,",
-                    >= 11 and < 18 => "İyi Günler,",
-                    >= 18 and < 22 => "İyi Akşamlar,",
-                    _ => "İyi Geceler,"
-                };
-            }
-            <h1>@greetingMessage</h1>
-            <h1>
-                @Model.User.Name @Model.User.Surname
-            </h1>
+                    <partial name="_CardMain" model="item" />
+                }
+            </div>
         </div>
-        <a class="mr-5 p-2 bg-appBgSecondary rounded-full" href="/Home/MyProfile">
-            <img class="mr-1" src="~/images/home/Profile_button.svg" alt="Profile Button">
-        </a>
-    </div>
-
-    @* Carousel *@
-    <div class="max-w-[100vm] flex flex-col gap-6">
-        <h1 class="text-[1.375rem] font-bold text-appText">Fırsatlar</h1>
-        <div class="flex flex-nowrap overflow-y-scroll gap-3 scrollbar-hide">
-            @foreach (var item in Model.MainCards)
-            {
-                <partial name="_CardMain" model="item" />
-            }
-        </div>
-    </div>
-
-
-    <div class="flex flex-col gap-6">
-
-        @* Pazarlama Karti *@
-        <h1 class="text-[1.375rem] font-bold text-appText">Pazarlama</h1>
-        <a href="/Expert/Index" class="flex flex-col p-3 gap-6 bg-appCartBg rounded-3xl no-underline">
-            <div class="flex gap-3">
-                <img src="~/images/home/marketingCard.png" alt="Marketing Image">
-                <div class="flex flex-col gap-2 text-appText justify-center">
-                    <h1 class="text-base font-semibold">Dükkanınızı tanıtın</h1>
-                    <p class="text-sm">İşletmenizin reklamını bütçenizi yormadan uzmanlardan destek alarak yapın.</p>
+    
+    
+        <div class="flex flex-col gap-6">
+    
+            @* Pazarlama Karti *@
+            <h1 class="text-[1.375rem] font-bold text-appText">Pazarlama</h1>
+            <a href="/Expert/Index" class="flex flex-col p-3 gap-6 bg-appCartBg rounded-3xl no-underline">
+                <div class="flex gap-3">
+                    <img src="~/images/home/marketingCard.png" alt="Marketing Image">
+                    <div class="flex flex-col gap-2 text-appText justify-center">
+                        <h1 class="text-base font-semibold">Dükkanınızı tanıtın</h1>
+                        <p class="text-sm">İşletmenizin reklamını bütçenizi yormadan uzmanlardan destek alarak yapın.</p>
+                    </div>
                 </div>
-            </div>
-        </a>
-
-        @* Is Birlikleri Karti *@
-        <a href="/Home/MyProfile" class="flex p-3 gap-6 bg-appCartBg rounded-3xl no-underline">
-            <div class="flex flex-col gap-2 text-appText justify-center">
-                <h1 class="text-base font-semibold">İşletmenizi İş Birliklerine Açın</h1>
-                <p class="text-sm">İş birlikleri kurarak ek gelir elde edin. Detaylar için tıklayın.</p>
-            </div>
-            <img class="h-16 w-16" src="~/images/home/dollarIcon.svg" alt="Co-Op Icon">
-        </a>
-
-        @* Bize Yazin Karti *@
-        @await Html.PartialAsync("_ContactUsCard", "Esnafa Gelir ile ilgili her türlü beklenti ve yorumlarınızı bize yazabilirsiniz.")
+            </a>
+    
+            @* Is Birlikleri Karti *@
+            <a href="/Home/MyProfile" class="flex p-3 gap-6 bg-appCartBg rounded-3xl no-underline">
+                <div class="flex flex-col gap-2 text-appText justify-center">
+                    <h1 class="text-base font-semibold">İşletmenizi İş Birliklerine Açın</h1>
+                    <p class="text-sm">İş birlikleri kurarak ek gelir elde edin. Detaylar için tıklayın.</p>
+                </div>
+                <img class="h-16 w-16" src="~/images/home/dollarIcon.svg" alt="Co-Op Icon">
+            </a>
+    
+            @* Bize Yazin Karti *@
+            @await Html.PartialAsync("_ContactUsCard", "Esnafa Gelir ile ilgili her türlü beklenti ve yorumlarınızı bize yazabilirsiniz.")
+        </div>
+    
+        @await Html.PartialAsync("_NavbarPartial", "Home")
+    
     </div>
-
-    @await Html.PartialAsync("_NavbarPartial", "Home")
-
 </div>

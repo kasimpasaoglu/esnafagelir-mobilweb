@@ -1,32 +1,34 @@
 @model OpportunitiesIndexVM
 
-<div class="flex flex-col py-11 px-4 gap-2 mb-14">
-    @* Header *@
-    <div class="text-[1.375rem] font-bold text-appText">
-        <h1>Esnaflara</h1>
-        <h1>Özel Fırsatlar</h1>
+<div class="bg-appBgMain w-full h-full">
+    <div class="flex flex-col py-11 px-4 gap-2 mb-14">
+        @* Header *@
+        <div class="text-[1.375rem] font-bold text-appText">
+            <h1>Esnaflara</h1>
+            <h1>Özel Fırsatlar</h1>
+        </div>
+
+        @* Carousel *@
+        <div class="max-w-[100vm] gap-6 flex flex-nowrap overflow-y-scroll scrollbar-hide mb-6">
+            @foreach (var item in Model.PrimaryList)
+            {
+                <partial name="_CardMain" model="item" />
+            }
+        </div>
+
+        @* Main *@
+        <h1 class="text-[1.375rem] font-bold text-appText">Keşfedin</h1>
+        <div id="opportunities-list" class="flex flex-col gap-4 items-center justify-center">
+            @foreach (var item in Model.SecondaryList)
+            {
+                <partial name="_CardSecondary" model="item" />
+            }
+        </div>
+        <a id="load-more" class="text-appSecondary text-sm text-center">Daha fazla göster</a>
+
+
+        @await Html.PartialAsync("_NavbarPartial", "Opportunities")
     </div>
-
-    @* Carousel *@
-    <div class="max-w-[100vm] gap-6 flex flex-nowrap overflow-y-scroll scrollbar-hide mb-6">
-        @foreach (var item in Model.PrimaryList)
-        {
-            <partial name="_CardMain" model="item" />
-        }
-    </div>
-
-    @* Main *@
-    <h1 class="text-[1.375rem] font-bold text-appText">Keşfedin</h1>
-    <div id="opportunities-list" class="flex flex-col gap-4 items-center justify-center">
-        @foreach (var item in Model.SecondaryList)
-        {
-            <partial name="_CardSecondary" model="item" />
-        }
-    </div>
-    <a id="load-more" class="text-appSecondary text-sm text-center">Daha fazla göster</a>
-
-
-    @await Html.PartialAsync("_NavbarPartial", "Opportunities")
 </div>
 
 <script>

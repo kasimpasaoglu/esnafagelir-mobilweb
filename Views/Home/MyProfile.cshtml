@@ -6,11 +6,11 @@
 
 @{
         var htmlAttributes = new Dictionary<string, object>
-{{"class", "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2"}};
+{{"class", "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2 bg-appBgSecondary"}};
     var htmlAttributesCities = new Dictionary<string, object>
-{{"class", "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2"}, {"id", "cityDropdown"}};
+{{"class", "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2 bg-appBgSecondary"}, {"id", "cityDropdown"}};
     var htmlAttributesDisricts = new Dictionary<string, object>
-{{"class", "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2"}, {"id", "districtDropdown"}};
+{{"class", "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2 bg-appBgSecondary"}, {"id", "districtDropdown"}};
 
     if (!Model.IsEditMode)
     {
@@ -90,14 +90,14 @@
                 <div>
                     <label asp-for="User.Name" class="text-appStroke text-xs font-inter font-normal">Ad</label>
                     <input readonly="@(!Model.IsEditMode)"
-                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full bg-appBgMain"
+                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full"
                         asp-for="User.Name" type="text">
                     <span class="text-appWarning text-sm" asp-validation-for="User.Name"></span>
                 </div>
                 <div>
                     <label asp-for="User.Surname" class="text-appStroke text-xs font-inter font-normal">Soyad</label>
                     <input readonly="@(!Model.IsEditMode)"
-                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full bg-appBgMain"
+                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full"
                         asp-for="User.Surname" type="text">
                     <span class="text-appWarning text-sm" asp-validation-for="User.Surname"></span>
                 </div>
@@ -105,7 +105,7 @@
                     <label asp-for="User.PhoneNumber" class="text-appStroke text-xs font-inter font-normal">Cep
                         Telefonu</label>
                     <input readonly="@(!Model.IsEditMode)"
-                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full bg-appBgMain"
+                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full"
                         asp-for="User.PhoneNumber" type="tel">
                     <span class="text-appWarning text-sm" asp-validation-for="User.PhoneNumber"></span>
                 </div>
@@ -129,7 +129,7 @@
                     <label asp-for="Business.BusinessName" class="text-appStroke text-xs font-inter font-normal">İşletme
                         Adı</label>
                     <input readonly="@(!Model.IsEditMode)"
-                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full bg-appBgMain"
+                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full"
                         asp-for="Business.BusinessName" type="text">
                     <span class="text-appWarning text-sm" asp-validation-for="Business.BusinessName"></span>
                 </div>
@@ -172,7 +172,7 @@
                     <label asp-for="Business.Address"
                         class="text-appStroke text-xs font-inter font-normal">Adress</label>
                     <textarea readonly="@(!Model.IsEditMode)"
-                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full bg-appBgMain"
+                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full"
                         asp-for="Business.Address"></textarea>
                     <span class="text-appWarning text-sm" asp-validation-for="Business.Address"></span>
                 </div>

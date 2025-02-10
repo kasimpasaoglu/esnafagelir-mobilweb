@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-    @apply font-sans bg-appBgMain
+    @apply font-sans bg-appBgSecondary
 }
 
 .root {

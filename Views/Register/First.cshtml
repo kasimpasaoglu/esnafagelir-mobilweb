@@ -10,13 +10,13 @@
         <div class="w-full flex flex-col gap-2">
             <div>
                 <label asp-for="User.Name" class="text-appStroke text-xs font-inter font-normal">Ad</label>
-                <input class="bg-appBgMain border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
+                <input class="border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
                     asp-for="User.Name" type="text">
                 <span class="text-appWarning text-sm" asp-validation-for="User.Name"></span>
             </div>
             <div>
                 <label asp-for="User.Surname" class="text-appStroke text-xs font-inter font-normal">Soyad</label>
-                <input class="bg-appBgMain border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
+                <input class="border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
                     asp-for="User.Surname" type="text">
                 <span class="text-appWarning text-sm" asp-validation-for="User.Surname"></span>
             </div>
@@ -27,7 +27,7 @@
                          s => s.SelectedRoleId,
                          new SelectList(Model.Roles, "RoleId", "RoleName"),
                          "Seçiniz",
-                         new {@class = "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2" }
+                         new {@class = "bg-appBgSecondary border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2" }
                          )
                          <span class="text-appWarning text-sm" asp-validation-for="SelectedRoleId"></span>
             </div>

@@ -10,7 +10,7 @@
                 
                 <div>
                     <label asp-for="Business.BusinessName" class="text-appStroke text-xs font-inter font-normal">İşletme Adı</label>
-                    <input class="bg-appBgMain border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
+                    <input class="border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
                         asp-for="Business.BusinessName" type="text">
                     <span class="text-appWarning text-sm" asp-validation-for="Business.BusinessName"></span>
                 </div>
@@ -21,7 +21,7 @@
                          s => s.SelectedBusinessTypeId,
                          new SelectList(Model.BusinessTypes, "BusinessTypeId", "BusinessTypeName"),
                          "Seçiniz",
-                         new {@class = "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2" }
+                         new {@class = "border-b-2 text-[1rem] bg-appBgSecondary border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2" }
                          )
                          <span class="text-appWarning text-sm" asp-validation-for="SelectedBusinessTypeId"></span>
                 </div>
@@ -38,7 +38,7 @@
                         new SelectList(Model.Cities, "CityId", "CityName"),
                         "Seçiniz",
                         new {
-                            @class = "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2",
+                            @class = "border-b-2 text-[1rem] bg-appBgSecondary border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2",
                             id= "cityDropdown"
                             }
                         )
@@ -49,7 +49,7 @@
                     <label for="SelectedDisrictId" class="text-appStroke text-xs font-inter font-normal">İlçe</label>
                     @if(Model.Districts.Count() < 1)
                     {
-                    <select id="districtDropdown" name="SelectedDisrictId" class="border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2">
+                    <select id="districtDropdown" name="SelectedDisrictId" class="border-b-2 text-[1rem] bg-appBgSecondary border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2">
                         <option value="">Önce Şehir Seçiniz</option>
                     </select>
                     }
@@ -60,7 +60,7 @@
                         new SelectList(Model.Districts, "DistrictId", "DistrictName"),
                         "Seçiniz",
                         new {
-                            @class = "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2",
+                            @class = "border-b-2 text-[1rem] bg-appBgSecondary border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2",
                             id= "districtDropdown"
                             }
                         ) 
@@ -70,7 +70,7 @@
                 
                 <div>
                     <label asp-for="Business.Address" class="text-appStroke text-xs font-inter font-normal">Adress</label>
-                    <textarea class="border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2" asp-for="Business.Address" ></textarea>
+                    <textarea class="border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2" asp-for="Business.Address" ></textarea>
                     <span class="text-appWarning text-sm" asp-validation-for="Business.Address"></span>
                 </div>
 
