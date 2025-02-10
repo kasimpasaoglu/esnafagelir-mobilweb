@@ -1,5 +1,5 @@
 @model MyProfileVM
-
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.2/dist/css/tom-select.css" rel="stylesheet">
 @{
     ViewData["Title"] = "Profilim";
 }
@@ -135,14 +135,10 @@
                 </div>
 
                 <div>
-                    <label asp-for="SelectedBusinessTypeId"
-                        class="text-appStroke text-xs font-inter font-normal">İşletme
-                        Türü</label>
-                    @Html.DropDownListFor(
-                             s => s.SelectedBusinessTypeId,
-                             new SelectList(Model.BusinessTypes, "BusinessTypeId", "BusinessTypeName"),
-                             "Seçiniz",
-                             htmlAttributes)
+                    <label for="businessTypeDropdown" class="text-appStroke text-xs font-inter font-normal">İşletme Türü</label>
+                    <select id="businessTypeDropdown" name="SelectedBusinessTypeId" class="border-b-2 text-[1rem] bg-appBgSecondary border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2" disabled="@(!Model.IsEditMode)">
+                        <option value="">Seçiniz</option>
+                    </select>
                     <span class="text-appWarning text-sm" asp-validation-for="SelectedBusinessTypeId"></span>
                 </div>
 
@@ -182,6 +178,7 @@
     </form>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.2/dist/js/tom-select.complete.min.js"></script>
 <script>
     document.getElementById("cityDropdown").addEventListener("change", function () {
         const cityId = this.value
@@ -262,5 +259,34 @@
             }
         }, 1000)(); // 1 saniye debounce süresi
     });
+</script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch("/Register/GetBusinessTypes")
+            .then(response => response.json())
+            .then(data => {
+                const selectElement = document.getElementById("businessTypeDropdown");
+                selectElement.innerHTML = '<option value="">Seçiniz</option>'; // varsayilan
+
+                data.forEach(businessType => {
+                    const option = document.createElement("option");
+                    option.value = businessType.id;
+                    option.textContent = businessType.name;
+                    selectElement.appendChild(option);
+                });
+
+                // TomSelect ile dropdown'ı başlat
+                new TomSelect("#businessTypeDropdown", {
+                    create: false,
+                    sortField: {
+                        field: "text",
+                        direction: "asc"
+                    },
+                    placeholder: "İşletme türünü seçin...",
+                    maxItems: 1
+                });
+            })
+            .catch(error => console.error("Hata:", error));
+    });
 </script>

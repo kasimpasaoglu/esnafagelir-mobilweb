@@ -134,4 +134,12 @@ public class RegisterController : Controller
         return Json(_mapper.Map<List<DistrictVM>>(districtsDTO)); // JSON formatında döndür
     }
 
+    // businesstpyes listesinde yazarak arama yapabilmek icin bu endpointe istek atilacak
+    [HttpGet]
+    public IActionResult GetBusinessTypes()
+    {
+        var businessTypes = _businessTypesList;
+        return Json(businessTypes.Select(bt => new { id = bt.BusinessTypeId, name = bt.BusinessTypeName }));
+    }
+
 }
