@@ -1,11 +1,6 @@
 INSERT INTO Roles (RoleName)
 VALUES
+('Unknown')
+('Çalışan'),
 ('İşletme Sahibi'),
-('Yönetici / Müdür'),
-('Müdür Yardımcısı'),
-('Satın Alma Personeli'),
-('Satış Personeli'),
-('Muhasebeci'),
-('Danışman'),
-('İnsan Kaynakları'),
-('Diğer');
+('İşletme Ortağı');
