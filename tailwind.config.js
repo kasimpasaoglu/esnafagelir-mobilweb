@@ -13,7 +13,8 @@ module.exports = {
         appCartBg: '#FEFEFE',
         appStroke: '#939393',
         appText: '#4E4E4E',
-        appBgMain: '#F5F5F5'
+        appBgMain: '#F5F5F5',
+        appBgSecondary: '#FDFDFD'
       },
       fontFamily: {
         sans: ['Quicksand', 'sans-serif'], // Quicksand varsayilan
