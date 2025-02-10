@@ -11,7 +11,7 @@
                 <div>
                     <label asp-for="Business.BusinessName" class="text-appStroke text-xs font-inter font-normal">İşletme Adı</label>
                     <input class="bg-appBgMain border-b-2 text-[1rem] border-gray-300 focus:outline-none focus:border-appPrimary w-full"
-                        asp-for="Business.BusinessName" type="text" placeholder="Esnafa Gelir ltd.">
+                        asp-for="Business.BusinessName" type="text">
                     <span class="text-appWarning text-sm" asp-validation-for="Business.BusinessName"></span>
                 </div>
 
@@ -47,15 +47,30 @@
                 
                 <div>
                     <label for="SelectedDisrictId" class="text-appStroke text-xs font-inter font-normal">İlçe</label>
+                    @if(Model.Districts.Count() < 1)
+                    {
                     <select id="districtDropdown" name="SelectedDisrictId" class="border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2">
                         <option value="">Önce Şehir Seçiniz</option>
                     </select>
+                    }
+                    else
+                    {
+                       @Html.DropDownListFor(
+                        s=> s.SelectedDisrictId,
+                        new SelectList(Model.Districts, "DistrictId", "DistrictName"),
+                        "Seçiniz",
+                        new {
+                            @class = "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2",
+                            id= "districtDropdown"
+                            }
+                        ) 
+                    }
                     <span class="text-appWarning text-sm" asp-validation-for="SelectedDisrictId"></span>
                 </div>
                 
                 <div>
                     <label asp-for="Business.Address" class="text-appStroke text-xs font-inter font-normal">Adress</label>
-                    <textarea class="border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2" asp-for="Business.Address" placeholder="Açık adresi giriniz."></textarea>
+                    <textarea class="border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2" asp-for="Business.Address" ></textarea>
                     <span class="text-appWarning text-sm" asp-validation-for="Business.Address"></span>
                 </div>
 
@@ -68,13 +83,14 @@
 </form>
 
 <script>
+
     document.getElementById("cityDropdown").addEventListener("change", function () {
         const cityId = this.value
         const districtDropdown = document.getElementById("districtDropdown")
 
-        if (!cityId) {
-            districtDropdown.innerHTML = '<option value="">Önce Şehir Seçiniz</option>';
-            return
+        if(!cityId){
+            districtDropdown.innerHTML = '<option value="0">Seçiniz</option>'
+            return;
         }
 
         fetch(`/Register/GetDistrictsByCityId?cityId=${cityId}`)

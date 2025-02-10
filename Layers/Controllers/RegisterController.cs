@@ -102,7 +102,7 @@ public class RegisterController : Controller
         {
             model.BusinessTypes = _businessTypesList;
             model.Cities = _cityList;
-            model.Districts = new List<DistrictVM>();
+            model.Districts = _mapper.Map<List<DistrictVM>>(await _selectorsService.GetDistrictsByCityId(model.SelectedCityId));
             return View(model);
         }
 
