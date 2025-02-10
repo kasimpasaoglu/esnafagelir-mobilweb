@@ -14,7 +14,9 @@ module.exports = {
         appStroke: '#939393',
         appText: '#4E4E4E',
         appBgMain: '#F5F5F5',
-        appBgSecondary: '#FDFDFD'
+        appBgSecondary: '#FDFDFD',
+        appDisabledBtn: '#FFCEB1',
+        appOverlay: '#D9D9D9'
       },
       fontFamily: {
         sans: ['Quicksand', 'sans-serif'], // Quicksand varsayilan

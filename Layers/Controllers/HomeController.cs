@@ -121,30 +121,6 @@ public class HomeController : Controller
         var business = JsonConvert.DeserializeObject<BusinessVM>(businessString); // business
 
 
-
-        if (!model.IsEditMode)
-        {   // edit mode ac, modeli toparla gonder
-            ModelState.Clear();
-            model.IsEditMode = true;
-
-            model.User = user;
-            model.Business = business;
-
-            model.Roles = _rolesList;
-            model.SelectedRoleId = user.RoleId;
-
-            model.BusinessTypes = _businessTypesList;
-            model.SelectedBusinessTypeId = business.BusinessTypeId;
-
-            model.Cities = _cityList;
-            model.SelectedCityId = await _selectorsService.GetCityIdByDisrictId(business.DistrictId);
-
-            model.Districts = _mapper.Map<List<DistrictVM>>(await _selectorsService.GetDistrictsByCityId(model.SelectedCityId));
-            model.SelectedDisrictId = business.DistrictId;
-
-            return View(model);
-        }
-
         var validationResult = _updateValidator.Validate(model);
 
         if (!validationResult.IsValid)
@@ -181,7 +157,6 @@ public class HomeController : Controller
             user.BusinessId = businessId; // gelen business id user ve business'a eklenir
             business.BusinessId = businessId;
             model.IsUpdatedSuccesfully = true; //ekranda guncelleme basarili metni gelmesi icin
-            model.IsEditMode = false; //editmode kapali
         }
 
 

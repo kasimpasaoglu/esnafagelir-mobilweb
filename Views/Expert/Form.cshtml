@@ -60,7 +60,7 @@
                     <label asp-for="Message" class="text-appStroke text-xs font-inter font-normal">Detaylı Bilgi</label>
                     <textarea
                         placeholder="Uzmanlardan beklentinizle ilgili birkaç detay bilgiyi bu alana giriniz..."
-                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full"
+                        class="basic-input"
                         asp-for="Message" type="text"></textarea>
                     <span class="text-appWarning text-sm" asp-validation-for="Message"></span>
                 </div>
@@ -69,14 +69,14 @@
                 <div>
                     <label asp-for="User.Name" class="text-appStroke text-xs font-inter font-normal">Ad</label>
                     <input
-                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full"
+                        class="basic-input"
                         asp-for="User.Name" type="text">
                     <span class="text-appWarning text-sm" asp-validation-for="User.Name"></span>
                 </div>
                 <div>
                     <label asp-for="User.Surname" class="text-appStroke text-xs font-inter font-normal">Soyad</label>
                     <input
-                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full"
+                        class="basic-input"
                         asp-for="User.Surname" type="text">
                     <span class="text-appWarning text-sm" asp-validation-for="User.Surname"></span>
                 </div>
@@ -84,7 +84,7 @@
                     <label asp-for="User.PhoneNumber" class="text-appStroke text-xs font-inter font-normal">Cep
                         Telefonu</label>
                     <input
-                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full"
+                        class="basic-input"
                         asp-for="User.PhoneNumber" type="tel">
                     <span class="text-appWarning text-sm" asp-validation-for="User.PhoneNumber"></span>
                 </div>
@@ -107,7 +107,7 @@
                     <label asp-for="Business.BusinessName" class="text-appStroke text-xs font-inter font-normal">İşletme
                         Adı</label>
                     <input
-                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full"
+                        class="basic-input"
                         asp-for="Business.BusinessName" type="text">
                     <span class="text-appWarning text-sm" asp-validation-for="Business.BusinessName"></span>
                 </div>
@@ -126,7 +126,7 @@
                     <label asp-for="Business.Address"
                         class="text-appStroke text-xs font-inter font-normal">Adress</label>
                     <textarea
-                        class="border-b-[1px] pb-1 text-[1rem] border-appStroke focus:outline-none @(Model.IsEditMode ? "focus:border-appPrimary" : "") w-full"
+                        class="basic-input"
                         asp-for="Business.Address"></textarea>
                     <span class="text-appWarning text-sm" asp-validation-for="Business.Address"></span>
                 </div>

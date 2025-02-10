@@ -10,7 +10,6 @@ public class MyProfileVM
     public int SelectedCityId { get; set; }
     public List<DistrictVM> Districts { get; set; }
     public int SelectedDisrictId { get; set; }
-    public bool IsEditMode { get; set; } = false;
     public bool IsUpdatedSuccesfully { get; set; } = false;
 }
 // bu model ExpertRequestFormMail modelinde de kullaniliyor

@@ -10,9 +10,7 @@
 
         <div class="flex flex-col gap-5">
             <label for="PhoneNumber" class="text-appStroke text-xs font-inter font-normal">Cep Telefonu</label>
-            <input maxlength="11"
-                class="border-b-2 text-[1rem] border-gray-300 bg-appBgSecondary focus:outline-none focus:border-appPrimary w-full"
-                asp-for="PhoneNumber" type="tel" placeholder="">
+            <input maxlength="11" class="basic-input" asp-for="PhoneNumber" type="tel" placeholder="">
             <span class="text-appWarning text-sm" asp-validation-for="PhoneNumber"></span>
             <div class="flex justify-center items-center gap-2 mt-4">
 

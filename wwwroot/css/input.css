@@ -3,13 +3,17 @@
 @tailwind utilities;
 
 body {
-    @apply font-sans bg-appBgSecondary
+    @apply font-sans bg-appBgSecondary;
 }
 
 .root {
-    @apply min-h-screen
+    @apply min-h-screen;
 }
 
 a {
-    @apply underline text-blue-500 text-sm
+    @apply underline text-blue-500 text-sm;
+}
+
+.basic-input {
+    @apply border-b-2 text-lg border-appStroke bg-appBgSecondary focus:outline-none focus:border-appPrimary w-full py-1;
 }
