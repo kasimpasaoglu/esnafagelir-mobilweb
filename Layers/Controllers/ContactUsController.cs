@@ -37,7 +37,15 @@ public class ContactUsController : Controller
         var result = await _contactUsService.Put(user.UserId, model.Message);
         if (result > 0)
         {
-            await SendEmail(model, user);
+            try
+            {
+                await SendEmail(model, user);
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Success");
+            }
+
             return RedirectToAction("Success");
         }
         return View(model);
@@ -71,7 +79,9 @@ public class ContactUsController : Controller
         {
 
             cli.EnableSsl = true;
-            cli.Credentials = new System.Net.NetworkCredential("GMAIL_ADDRESS", "GMAIL_APP_PASSWORD"); // gonderici hesaba ait giris bilgileri env olarak atanmali
+            cli.UseDefaultCredentials = false;
+            cli.DeliveryMethod = SmtpDeliveryMethod.Network;
+            cli.Credentials = new System.Net.NetworkCredential("developer@esnafagelir.com", "wbwskowbzfctaggo"); // gonderici hesaba ait giris bilgileri env olarak atanmali
             MailMessage message = new()
             {
                 Subject = $"Esnafa Gelir {user.Name} kullanıcısı mesaj gönderdi",

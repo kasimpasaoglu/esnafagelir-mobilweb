@@ -108,7 +108,7 @@ public class LoginController : Controller
     }
     public IActionResult LegalNotice()
     {
-        return View();
+        return Redirect("https://www.esnafagelir.com/kvkk");
     }
 
     public IActionResult RequestDetail()
