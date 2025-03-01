@@ -13,6 +13,8 @@
 {{"class", "border-b-2 text-[1rem] bg-appBgMain border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2 bg-appBgSecondary inputWatcher"}, {"id", "districtDropdown"}};
 
 }
+<!-- Gizli alan (hidden field) -->
+<input type="hidden" id="businessTypeId" name="businessTypeId" value=@Model.SelectedBusinessTypeId>
 
 @await Html.PartialAsync("_HeaderPartial", new HeaderModel
 {
@@ -53,7 +55,7 @@
             <p class="text-sm">Dükkanınızın camına ilan / reklam asmak, yeni çıkan ürünleri denemek gibi iş birlikleri
                 ile ilave gelir
                 elde edebilirsiniz.</p>
-            <a class="text-appPrimary" href="">Detaylı bilgi</a>
+            <a class="text-appPrimary" href="https://www.esnafagelir.com/esnaflar">Detaylı bilgi</a>
         </div>
 
         <div class="col-span-3">
@@ -177,7 +179,7 @@
                 </div>
 
                             @* BUTTON *@
-                <button id="submitButton" disabled class="bg-appPrimary text-white px-28 py-3 rounded-full text-[1.38rem] font-bold disabled:bg-appDisabledBtn duration-200" type="submit">
+                <button id="submitButton" class="bg-appPrimary text-white px-28 py-3 rounded-full text-[1.38rem] font-bold disabled:bg-appDisabledBtn duration-200" type="submit">
                     Kaydet
                 </button>
 
@@ -331,6 +333,9 @@
                 });
             })
             .catch(error => console.error("Hata:", error));
+            
+        
+            
     });
 
 
@@ -346,5 +351,5 @@
             input.addEventListener('input', checkForChanges)
         })
    })
-    
+
 </script>
