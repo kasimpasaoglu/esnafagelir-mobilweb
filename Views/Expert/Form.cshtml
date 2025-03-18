@@ -1,5 +1,5 @@
 @model ExpertRequestFormMain
-
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.2/dist/css/tom-select.css" rel="stylesheet">
 @{
     ViewData["Title"] = "Uzman İletişim";
 }
@@ -66,6 +66,7 @@
                 </div>
 
                 <h1 class="text-[1.375rem] font-bold text-appText">Profil Bilgileri</h1>
+                
                 <div>
                     <label asp-for="User.Name" class="text-appStroke text-xs font-inter font-normal">Ad</label>
                     <input
@@ -73,6 +74,7 @@
                         asp-for="User.Name" type="text">
                     <span class="text-appWarning text-sm" asp-validation-for="User.Name"></span>
                 </div>
+
                 <div>
                     <label asp-for="User.Surname" class="text-appStroke text-xs font-inter font-normal">Soyad</label>
                     <input
@@ -80,6 +82,7 @@
                         asp-for="User.Surname" type="text">
                     <span class="text-appWarning text-sm" asp-validation-for="User.Surname"></span>
                 </div>
+
                 <div>
                     <label asp-for="User.PhoneNumber" class="text-appStroke text-xs font-inter font-normal">Cep
                         Telefonu</label>
@@ -88,6 +91,7 @@
                         asp-for="User.PhoneNumber" type="tel">
                     <span class="text-appWarning text-sm" asp-validation-for="User.PhoneNumber"></span>
                 </div>
+
                 <div>
                     <label asp-for="SelectedRoleId" class="text-appStroke text-xs font-inter font-normal">İşletmedeki
                         Rolü</label>
@@ -98,11 +102,13 @@
                              htmlAttributes)
                     <span class="text-appWarning text-sm" asp-validation-for="SelectedRoleId"></span>
                 </div>
+
             </div>
 
             @* Isletme Bilgileri *@
             <div class="flex flex-col justify-center gap-4">
                 <h1 class="text-[1.375rem] font-bold text-appText mt-5">İşletme Bilgileri</h1>
+                
                 <div>
                     <label asp-for="Business.BusinessName" class="text-appStroke text-xs font-inter font-normal">İşletme
                         Adı</label>
@@ -111,17 +117,24 @@
                         asp-for="Business.BusinessName" type="text">
                     <span class="text-appWarning text-sm" asp-validation-for="Business.BusinessName"></span>
                 </div>
+
                 <div>
-                    <label asp-for="SelectedBusinessTypeId"
-                        class="text-appStroke text-xs font-inter font-normal">İşletme
-                        Türü</label>
-                    @Html.DropDownListFor(
-                             s => s.SelectedBusinessTypeId,
-                             new SelectList(Model.BusinessTypes, "BusinessTypeId", "BusinessTypeName"),
-                             "Seçiniz",
-                             htmlAttributes)
+                    <label for="businessTypeDropdown" class="text-appStroke text-xs font-inter font-normal">İşletme Türü</label>
+                    <select id="businessTypeDropdown" name="SelectedBusinessTypeId" class="border-b-2 text-[1rem] bg-appBgSecondary border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2">
+                        <option value="">Seçiniz</option>
+                        @foreach(var businessType in Model.BusinessTypes)
+                        {
+                            <option 
+                                value="@businessType.BusinessTypeId" 
+                                selected="@(businessType.BusinessTypeId == Model.SelectedBusinessTypeId ? "selected" : null)">
+                                @businessType.BusinessTypeName
+                            </option>
+                        }
+                    </select>
                     <span class="text-appWarning text-sm" asp-validation-for="SelectedBusinessTypeId"></span>
                 </div>
+
+
                 <div>
                     <label asp-for="Business.Address"
                         class="text-appStroke text-xs font-inter font-normal">Adress</label>
@@ -152,12 +165,40 @@
                         )
                     <span class="text-appWarning text-sm" asp-validation-for="SelectedDisrictId"></span>
                 </div>
+
             </div>
+
             @await Html.PartialAsync("_ButtonPartial", new ButtonModel{ Text = "Gönder", IsSubmit = true })
+
         </div>
     </form>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.2/dist/js/tom-select.complete.min.js"></script>
+
+@* Isletme Turu Tom Select Ile *@
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const selectElement = document.getElementById("businessTypeDropdown");
+
+    // Eğer TomSelect zaten uygulanmışsa tekrar uygulama
+    if (selectElement.classList.contains("ts-wrapper")) {
+        return;
+    }
+
+    new TomSelect("#businessTypeDropdown", {
+        create: false,
+        sortField: {
+            field: "text",
+            direction: "asc"
+        },
+        placeholder: "İşletme türünü seçin...",
+        maxItems: 1
+    });
+});
+</script>
+
+@* Ilce secimi dropdownu dinamik olarak doldurma *@
 <script>
     document.getElementById("cityDropdown").addEventListener("change", function () {
         const cityId = this.value

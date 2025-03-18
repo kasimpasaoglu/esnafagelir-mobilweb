@@ -1,12 +1,12 @@
--- Opportunities tablosu
-CREATE TABLE Opportunities (
-    OpportunityId INT IDENTITY(1,1) PRIMARY KEY, 
-    Title NVARCHAR(255) NOT NULL,               
-    Description NVARCHAR(MAX) NOT NULL,         
-    ImagePath NVARCHAR(255) NOT NULL,           
-    Url NVARCHAR(255) NULL,                      
-    CreatedDate DATETIME NOT NULL DEFAULT GETDATE(), 
-    EndDate DATETIME NOT NULL, 
+-- !!! SCRIPTI calistirmadan once, 'shema.png'ye BAKARAK KONTROL EDIN !!!!!!!
+
+-- Admin tablosu
+CREATE TABLE Admin (
+    AdminId INT IDENTITY(1,1) PRIMARY KEY,
+    DeviceId NVARCHAR(36) NOT NULL, 
+    UserName NVARCHAR(100) NOT NULL,
+    UserPassword NVARCHAR(255) NOT NULL,
+    Salt NVARCHAR(255) NOT NULL
 );
 
 -- Cities tablosu
@@ -24,13 +24,13 @@ CREATE TABLE Districts (
 
 -- BusinessTypes tablosu
 CREATE TABLE BusinessTypes (
-    BusinessTypeId INT PRIMARY KEY IDENTITY(0,1),
+    BusinessTypeId INT PRIMARY KEY IDENTITY(1,1),
     BusinessTypeName NVARCHAR(100) NOT NULL
 );
 
 -- Businesses tablosu
 CREATE TABLE Businesses (
-    BusinessId INT PRIMARY KEY IDENTITY(0,1),
+    BusinessId INT PRIMARY KEY IDENTITY(1,1),
     BusinessTypeId INT NOT NULL FOREIGN KEY REFERENCES BusinessTypes(BusinessTypeId),
     DistrictId INT NOT NULL FOREIGN KEY REFERENCES Districts(DistrictId),
     BusinessName NVARCHAR(100) NOT NULL,
@@ -40,16 +40,16 @@ CREATE TABLE Businesses (
 
 -- Roles tablosu
 CREATE TABLE Roles (
-    RoleId INT PRIMARY KEY IDENTITY(0,1),
+    RoleId INT PRIMARY KEY IDENTITY(1,1),
     RoleName NVARCHAR(50) NOT NULL
 );
 
 -- Users tablosu
 CREATE TABLE Users (
     UserId INT PRIMARY KEY IDENTITY(1,1),
-    DeviceId UNIQUEIDENTIFIER NOT NULL,
+    DeviceId NVARCHAR(36) NOT NULL, 
     LastLogin DATETIME NULL,
-    IsConfirmedInfoText BIT NOT NULL,
+    IsPrivacyPolicyAccepted BIT NOT NULL, 
     PhoneNumber NVARCHAR(15) NOT NULL,
     Name NVARCHAR(100) NOT NULL,
     Surname NVARCHAR(100) NOT NULL,
@@ -79,11 +79,20 @@ CREATE TABLE ExpertCategories (
 CREATE TABLE ExpertRequests (
     ExpertRequestId INT PRIMARY KEY IDENTITY(1,1),
     UserId INT NOT NULL FOREIGN KEY REFERENCES Users(UserId),
-    BusinessId INT NOT NULL FOREIGN KEY REFERENCES Businesses(BusinessId),
+    BusinessId INT NULL FOREIGN KEY REFERENCES Businesses(BusinessId),
     ExpertCategoryId INT NOT NULL FOREIGN KEY REFERENCES ExpertCategories(ExpertCategoryId),
     Description NVARCHAR(500) NOT NULL,
     RecordDate DATETIME NOT NULL DEFAULT GETDATE(),
     RecordStatus INT NOT NULL
 );
 
-
+-- Opportunities tablosu
+CREATE TABLE Opportunities (
+    OpportunityId INT IDENTITY(1,1) PRIMARY KEY,
+    Title NVARCHAR(255) NOT NULL,
+    Description NVARCHAR(MAX) NOT NULL,
+    ImagePath NVARCHAR(255) NOT NULL,
+    Url NVARCHAR(255) NULL,
+    CreateDate DATETIME NOT NULL DEFAULT GETDATE(),
+    EndDate DATETIME NOT NULL
+);

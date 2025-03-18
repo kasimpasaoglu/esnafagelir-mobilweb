@@ -143,6 +143,15 @@
                     <label for="businessTypeDropdown" class="text-appStroke text-xs font-inter font-normal">İşletme Türü</label>
                     <select id="businessTypeDropdown" name="SelectedBusinessTypeId" class="border-b-2 text-[1rem] bg-appBgSecondary border-gray-300 focus:outline-none focus:border-appPrimary w-full py-2">
                         <option value="">Seçiniz</option>
+                        @foreach(var businessType in Model.BusinessTypes)
+                        {
+                            <option 
+                                value="@businessType.BusinessTypeId" 
+                                selected="@(businessType.BusinessTypeId == Model.SelectedBusinessTypeId ? "selected" : null)"
+                                >
+                                    @businessType.BusinessTypeName
+                            </option>
+                        }
                     </select>
                     <span class="text-appWarning text-sm" asp-validation-for="SelectedBusinessTypeId"></span>
                 </div>
@@ -179,7 +188,7 @@
                 </div>
 
                             @* BUTTON *@
-                <button id="submitButton" class="bg-appPrimary text-white px-28 py-3 rounded-full text-[1.38rem] font-bold disabled:bg-appDisabledBtn duration-200" type="submit">
+                <button id="submitButton" disabled class="bg-appPrimary text-white px-28 py-3 rounded-full text-[1.38rem] font-bold disabled:bg-appDisabledBtn duration-200" type="submit">
                     Kaydet
                 </button>
 
@@ -289,8 +298,6 @@
 
         // ID geçerli ise sorgu işlemini debounce ile gerçekleştirin
         debounce(async function () {
-            console.log("BusinessId:", id);
-            console.log("AllowsCoop:", allows);
 
             const response = await fetch(`/Home/UpdateAllowsCoop?businessId=${id}&allowsCoop=${allows}`, {
                 method: 'POST',
@@ -308,37 +315,24 @@
 @* isletme turu aramasi ve secimi yapan script *@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        fetch("/Register/GetBusinessTypes")
-            .then(response => response.json())
-            .then(data => {
-                const selectElement = document.getElementById("businessTypeDropdown");
-                selectElement.innerHTML = '<option value="">Seçiniz</option>'; // varsayilan
+            const tomSelectInstance = new TomSelect("#businessTypeDropdown", {
+                create: false,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                },
+                placeholder: "İşletme türünü seçin...",
+                maxItems: 1
+            });
 
-                data.forEach(businessType => {
-                    const option = document.createElement("option");
-                    option.value = businessType.id;
-                    option.textContent = businessType.name;
-                    selectElement.appendChild(option);
-                });
-
-                // TomSelect ile dropdown'ı başlat
-                new TomSelect("#businessTypeDropdown", {
-                    create: false,
-                    sortField: {
-                        field: "text",
-                        direction: "asc"
-                    },
-                    placeholder: "İşletme türünü seçin...",
-                    maxItems: 1
-                });
-            })
-            .catch(error => console.error("Hata:", error));
-            
-        
-            
+            // Kullanıcı dropdown'da değişiklik yaparsa, "Kaydet" butonunu aktif et
+            tomSelectInstance.on('change', function () {
+                document.querySelector('#submitButton').disabled = false;
+            });
     });
 
 
+    // geri kalan inputlarda bir degisiklik olursa kaydet butonunu aktif et
    document.addEventListener("DOMContentLoaded", function () {
         const inputs = document.querySelectorAll('.inputWatcher');
         const submitButton = document.querySelector('#submitButton');
