@@ -80,17 +80,20 @@ public class ContactUsController : Controller
             cli.EnableSsl = true;
             cli.UseDefaultCredentials = false;
             cli.DeliveryMethod = SmtpDeliveryMethod.Network;
-            cli.Credentials = new System.Net.NetworkCredential("test@esnafagelir.com", "test"); // gonderici hesaba ait giris bilgileri env olarak atanmali
+            cli.Credentials = new System.Net.NetworkCredential("developer@esnafagelir.com", "wbwskowbzfctaggo"); // gonderici hesaba ait giris bilgileri env olarak atanmali
             MailMessage message = new()
             {
                 Subject = $"Esnafa Gelir {user.Name} kullanıcısı mesaj gönderdi",
                 Body = template,
-                From = new MailAddress("test@esnafagelir.com"),
+                From = new MailAddress("developer@esnafagelir.com"),
                 IsBodyHtml = true,
             };
 
             // alicilar
-            message.To.Add("test@gmail.com");
+            message.To.Add("emrahelis@gmail.com");
+            message.To.Add("bilgi@esnafagelir.com");
+            message.To.Add("orhunozbalkan@gmail.com");
+            message.To.Add("ismerd73@hotmail.com");
 
             await cli.SendMailAsync(message); // send yerine asenkron olani tercih edilmeli
         }
